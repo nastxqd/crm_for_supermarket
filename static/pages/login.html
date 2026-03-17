@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в систему</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            color: #2563eb;
+            font-weight: 700;
+        }
+
+        .logo p {
+            color: #6c757d;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: #2563eb;
+            outline: none;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background: #1d4ed8;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .message.error {
+            display: block;
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .message.success {
+            display: block;
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <div class="logo">
+        <h1>Shop</h1>
+        <p>Система управления складом</p>
+    </div>
+
+    <h2>Вход в систему</h2>
+
+    <div id="message" class="message"></div>
+
+    <form action="/login" method="post">
+        <!-- CSRF токен будет добавлен через JavaScript -->
+        <input type="hidden" name="_csrf" id="_csrf" value="">
+
+        <div class="form-group">
+            <label>Имя пользователя</label>
+            <input type="text" name="username" required autofocus>
+        </div>
+
+        <div class="form-group">
+            <label>Пароль</label>
+            <input type="password" name="password" required>
+        </div>
+
+        <button type="submit" class="btn-login">Войти</button>
+    </form>
+</div>
+
+<script>
+    // Показываем сообщения из URL параметров
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    const logout = urlParams.get('logout');
+
+    const messageDiv = document.getElementById('message');
+
+    if (error) {
+        messageDiv.textContent = 'Неверное имя пользователя или пароль';
+        messageDiv.className = 'message error';
+    }
+
+    if (logout) {
+        messageDiv.textContent = 'Вы успешно вышли из системы';
+        messageDiv.className = 'message success';
+    }
+
+    // Получаем CSRF токен из cookies
+    function getCsrfToken() {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            const [name, value] = cookie.trim().split('=');
+            if (name === 'XSRF-TOKEN' || name === 'CSRF-TOKEN') {
+                return value;
+            }
+        }
+        return null;
+    }
+
+    // Устанавливаем CSRF токен
+    const csrfToken = getCsrfToken();
+    if (csrfToken) {
+        document.getElementById('_csrf').value = csrfToken;
+    }
+</script>
+</body>
+</html>

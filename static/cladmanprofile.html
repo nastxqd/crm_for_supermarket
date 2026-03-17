@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль кладовщика | Складской учёт</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-light: #FCE4EC;      /* Светло-розовый */
+            --primary: #F48FB1;            /* Розовый */
+            --primary-dark: #EC407A;       /* Темно-розовый */
+            --secondary: #F3E5F5;          /* Светло-фиолетовый */
+            --accent: #CE93D8;             /* Сиреневый */
+            --success: #81C784;            /* Светло-зеленый */
+            --warning: #FFB74D;            /* Оранжевый */
+            --danger: #EF5350;             /* Красный */
+            --info: #4FC3F7;               /* Голубой */
+            --text: #5A5A72;               /* Текст */
+            --white: #FFFFFF;
+            --light-bg: #F8F9FA;
+            --dark-bg: #2D3748;
+        }
+        
+        * {
+            font-family: 'Nunito', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+        }
+        
+        /* Sidebar стили */
+        .sidebar {
+            background: linear-gradient(to bottom, var(--primary), var(--primary-dark));
+            color: white;
+            min-height: 100vh;
+            box-shadow: 3px 0 15px rgba(33, 150, 243, 0.2);
+            position: fixed;
+            width: 280px;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 30px 20px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-logo {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+        
+        .sidebar-title {
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-subtitle {
+            opacity: 0.9;
+            font-weight: 300;
+            font-size: 0.9rem;
+        }
+        
+        .nav-container {
+            padding: 20px 0;
+        }
+        
+        .nav-item {
+            margin: 5px 15px;
+        }
+        
+        .nav-link-custom {
+            color: rgba(255, 255, 255, 0.85);
+            padding: 15px 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .nav-link-custom:hover, .nav-link-custom.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .nav-link-custom i {
+            width: 25px;
+            font-size: 1.2rem;
+            margin-right: 15px;
+        }
+        
+        .nav-badge {
+            margin-left: auto;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        
+        .nav-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 20px 15px;
+        }
+        
+        /* Main content */
+        .main-content {
+            margin-left: 280px;
+            padding: 20px;
+        }
+        
+        /* Top navbar */
+        .top-navbar {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 15px 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .page-title {
+            color: var(--primary-dark);
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+        
+        /* Profile card */
+        .profile-card {
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(100, 181, 246, 0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        .profile-header {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            padding: 40px;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+        
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid white;
+            object-fit: cover;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .profile-edit-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .profile-edit-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(15deg);
+        }
+        
+        .profile-name {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .profile-title {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        
+        .profile-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .profile-body {
+            padding: 40px;
+        }
+        
+        .info-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            color: var(--primary-dark);
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-light);
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+        
+        .info-item {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            width: 200px;
+            color: var(--text);
+            font-weight: 600;
+        }
+        
+        .info-value {
+            color: #333;
+            flex: 1;
+        }
+        
+        /* Stats cards */
+        .stats-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            height: 100%;
+            border-left: 5px solid var(--primary);
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(100, 181, 246, 0.15);
+        }
+        
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+        
+        .stats-icon.receipt {
+            background: rgba(76, 175, 80, 0.1);
+            color: var(--success);
+        }
+        
+        .stats-icon.transfer {
+            background: rgba(33, 150, 243, 0.1);
+            color: var(--primary-dark);
+        }
+        
+        .stats-icon.writeoff {
+            background: rgba(239, 83, 80, 0.1);
+            color: var(--danger);
+        }
+        
+        .stats-icon.warehouse {
+            background: rgba(255, 183, 77, 0.1);
+            color: var(--warning);
+        }
+        
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .stats-label {
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+        
+        /* Quick actions */
+        .quick-actions {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(100, 181, 246, 0.1);
+            margin-top: 30px;
+        }
+        
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 25px 15px;
+            border: 2px dashed var(--primary-light);
+            border-radius: 15px;
+            background: var(--light-bg);
+            color: var(--primary-dark);
+            text-decoration: none;
+            transition: all 0.3s;
+            height: 100%;
+        }
+        
+        .action-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .action-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .action-text {
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        /* Recent activity */
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.3s;
+        }
+        
+        .activity-item:hover {
+            background: var(--light-bg);
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-time {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 5px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 250px;
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .profile-header {
+                padding: 30px 20px;
+            }
+            
+            .profile-avatar {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .info-item {
+                flex-direction: column;
+            }
+            
+            .info-label {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .profile-card, .stats-card, .quick-actions {
+            animation: fadeIn 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-warehouse"></i>
+            </div>
+            <h3 class="sidebar-title">Складской учёт</h3>
+            <p class="sidebar-subtitle">Панель кладовщика</p>
+        </div>
+        
+        <div class="nav-container">
+            <div class="nav-item">
+                <a href="#" class="nav-link-custom active">
+                    <i class="fas fa-user-circle"></i>
+                    Мой профиль
+                </a>
+            </div>
+            
+            <div class="nav-divider"></div>
+            
+            <div class="nav-item">
+                <a href="#" class="nav-link-custom">
+                    <i class="fas fa-truck-loading"></i>
+                    Поставки
+                    <span class="nav-badge">12</span>
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="#" class="nav-link-custom">
+                    <i class="fas fa-exchange-alt"></i>
+                    Перемещения
+                    <span class="nav-badge">8</span>
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="#" class="nav-link-custom">
+                    <i class="fas fa-minus-circle"></i>
+                    Списания
+                    <span class="nav-badge">3</span>
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="#" class="nav-link-custom">
+                    <i class="fas fa-boxes"></i>
+                    Инвентаризация
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="#" class="nav-link-custom">
+                    <i class="fas fa-clipboard-list"></i>
+                    Отчёты
+                </a>
+            </div>
+            
+            <div class="nav-divider"></div>
+            
+            <div class="nav-item">
+                <a href="#" class="nav-link-custom">
+                    <i class="fas fa-cog"></i>
+                    Настройки
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="index.html" class="nav-link-custom">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Выйти
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <div class="top-navbar">
+            <div>
+                <h1 class="page-title">Профиль кладовщика</h1>
+                <p class="text-muted mb-0">Управление вашими данными и операциями</p>
+            </div>
+            
+            <div class="user-menu">
+                <div class="position-relative">
+                    <button class="btn btn-outline-primary position-relative">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                </div>
+                
+                <div class="dropdown">
+                    <button class="btn btn-link text-dark text-decoration-none dropdown-toggle d-flex align-items-center" 
+                            type="button" data-bs-toggle="dropdown">
+                        <div class="me-2 text-end">
+                            <div class="fw-bold">Иван Петров</div>
+                            <small class="text-muted">Кладовщик</small>
+                        </div>
+                        <img src="https://ui-avatars.com/api/?name=Иван+Петров&background=64B5F6&color=fff&size=50" 
+                             class="rounded-circle" alt="Аватар">
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Профиль</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Настройки</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="index.html"><i class="fas fa-sign-out-alt me-2"></i>Выйти</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile Card -->
+        <div class="profile-card">
+            <div class="profile-header">
+                <button class="profile-edit-btn" title="Редактировать профиль">
+                    <i class="fas fa-edit"></i>
+                </button>
+                
+                <img src="https://ui-avatars.com/api/?name=Иван+Петров&background=fff&color=2196F3&size=150&bold=true" 
+                     alt="Иван Петров" class="profile-avatar">
+                
+                <h1 class="profile-name">Иван Петров</h1>
+                <p class="profile-title">Старший кладовщик</p>
+                <span class="profile-badge">
+                    <i class="fas fa-shield-alt me-1"></i> Уровень доступа: Высокий
+                </span>
+            </div>
+            
+            <div class="profile-body">
+                <!-- Personal Information -->
+                <div class="info-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-id-card"></i> Личная информация
+                    </h3>
+                    
+                    <div class="info-item">
+                        <div class="info-label">ФИО:</div>
+                        <div class="info-value">Петров Иван Сергеевич</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Должность:</div>
+                        <div class="info-value">
+                            Старший кладовщик
+                            <span class="badge bg-primary ms-2">Основной склад</span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">ID сотрудника:</div>
+                        <div class="info-value">WH-00482</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Дата приёма:</div>
+                        <div class="info-value">15 марта 2022 года</div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Стаж работы:</div>
+                        <div class="info-value">2 года 9 месяцев</div>
+                    </div>
+                </div>
+                
+                <!-- Contact Information -->
+                <div class="info-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-address-book"></i> Контактная информация
+                    </h3>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Email:</div>
+                        <div class="info-value">
+                            <i class="fas fa-envelope me-2 text-primary"></i>
+                            ivan.petrov@company.com
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Телефон:</div>
+                        <div class="info-value">
+                            <i class="fas fa-phone me-2 text-success"></i>
+                            +7 (912) 345-67-89
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Рабочий телефон:</div>
+                        <div class="info-value">
+                            <i class="fas fa-phone-alt me-2 text-info"></i>
+                            Внутренний: 234
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Часы работы:</div>
+                        <div class="info-value">
+                            <i class="fas fa-clock me-2 text-warning"></i>
+                            09:00 - 18:00 (Пн-Пт)
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Warehouse Access -->
+                <div class="info-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-warehouse"></i> Доступ к складам
+                    </h3>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <div class="info-label">Основной склад:</div>
+                                <div class="info-value">
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check-circle me-1"></i> Полный доступ
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <div class="info-label">Склад А:</div>
+                                <div class="info-value">
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check-circle me-1"></i> Полный доступ
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <div class="info-label">Холодильный склад:</div>
+                                <div class="info-value">
+                                    <span class="badge bg-warning">
+                                        <i class="fas fa-exclamation-circle me-1"></i> Ограниченный доступ
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <div class="info-label">Склад Б:</div>
+                                <div class="info-value">
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-times-circle me-1"></i> Нет доступа
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-4">
+                <div class="stats-card">
+                    <div class="stats-icon receipt">
+                        <i class="fas fa-truck-loading"></i>
+                    </div>
+                    <div class="stats-number">142</div>
+                    <div class="stats-label">Поставок за месяц</div>
+                    <small class="text-success">
+                        <i class="fas fa-arrow-up"></i> 12% больше чем в прошлом месяце
+                    </small>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <div class="stats-card">
+                    <div class="stats-icon transfer">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <div class="stats-number">89</div>
+                    <div class="stats-label">Перемещений</div>
+                    <small class="text-success">
+                        <i class="fas fa-arrow-up"></i> 8% больше
+                    </small>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <div class="stats-card">
+                    <div class="stats-icon writeoff">
+                        <i class="fas fa-minus-circle"></i>
+                    </div>
+                    <div class="stats-number">23</div>
+                    <div class="stats-label">Списаний</div>
+                    <small class="text-danger">
+                        <i class="fas fa-arrow-down"></i> 5% меньше
+                    </small>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <div class="stats-card">
+                    <div class="stats-icon warehouse">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <div class="stats-number">98.7%</div>
+                    <div class="stats-label">Точность инвентаризации</div>
+                    <small class="text-success">
+                        <i class="fas fa-check-circle"></i> Выше плана
+                    </small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions and Recent Activity -->
+        <div class="row">
+            <!-- Quick Actions -->
+            <div class="col-lg-8 mb-4">
+                <div class="quick-actions">
+                    <h3 class="section-title mb-4">
+                        <i class="fas fa-bolt"></i> Быстрые действия
+                    </h3>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <a href="#" class="action-btn" id="newReceipt">
+                                <div class="action-icon">
+                                    <i class="fas fa-truck"></i>
+                                </div>
+                                <div class="action-text">Новая поставка</div>
+                                <small class="text-muted mt-2">Зарегистрировать приход товара</small>
+                            </a>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <a href="#" class="action-btn" id="newTransfer">
+                                <div class="action-icon">
+                                    <i class="fas fa-arrows-alt-h"></i>
+                                </div>
+                                <div class="action-text">Перемещение</div>
+                                <small class="text-muted mt-2">Переместить между складами</small>
+                            </a>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <a href="#" class="action-btn" id="newWriteoff">
+                                <div class="action-icon">
+                                    <i class="fas fa-trash-alt"></i>
+                                </div>
+                                <div class="action-text">Списание</div>
+                                <small class="text-muted mt-2">Списать брак или потери</small>
+                            </a>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <a href="#" class="action-btn" id="inventoryCheck">
+                                <div class="action-icon">
+                                    <i class="fas fa-clipboard-check"></i>
+                                </div>
+                                <div class="action-text">Инвентаризация</div>
+                                <small class="text-muted mt-2">Проверить остатки</small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="col-lg-4 mb-4">
+                <div class="quick-actions h-100">
+                    <h3 class="section-title mb-4">
+                        <i class="fas fa-history"></i> Последние действия
+                    </h3>
+                    
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon bg-success bg-opacity-10 text-success">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="fw-bold">Приём поставки #4582</div>
+                                <p class="mb-1">Поступило 45 шт. "Смартфон XYZ"</p>
+                                <div class="activity-time">2 часа назад</div>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon bg-primary bg-opacity-10 text-primary">
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="fw-bold">Перемещение #2341</div>
+                                <p class="mb-1">20 шт. перемещено на склад А</p>
+                                <div class="activity-time">Сегодня, 11:30</div>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon bg-danger bg-opacity-10 text-danger">
+                                <i class="fas fa-minus-circle"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="fw-bold">Списание #891</div>
+                                <p class="mb-1">Списано 3 шт. (брак)</p>
+                                <div class="activity-time">Вчера, 16:45</div>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon bg-warning bg-opacity-10 text-warning">
+                                <i class="fas fa-clipboard-check"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="fw-bold">Инвентаризация</div>
+                                <p class="mb-1">Проверен раздел "Электроника"</p>
+                                <div class="activity-time">24 дек, 14:20</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle (если нужно)
+            const mobileMenuBtn = document.createElement('button');
+            mobileMenuBtn.className = 'btn btn-primary d-lg-none mobile-menu-btn';
+            mobileMenuBtn.style.cssText = 'position: fixed; top: 20px; left: 20px; z-index: 1001;';
+            mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            document.body.appendChild(mobileMenuBtn);
+            
+            mobileMenuBtn.addEventListener('click', function() {
+                document.querySelector('.sidebar').classList.toggle('active');
+            });
+            
+            // Quick action buttons
+            const quickActions = {
+                'newReceipt': 'Создание новой поставки',
+                'newTransfer': 'Перемещение товаров',
+                'newWriteoff': 'Списание товаров',
+                'inventoryCheck': 'Начать инвентаризацию'
+            };
+            
+            Object.keys(quickActions).forEach(id => {
+                document.getElementById(id).addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showNotification(quickActions[id]);
+                });
+            });
+            
+            // Edit profile button
+            document.querySelector('.profile-edit-btn').addEventListener('click', function() {
+                showNotification('Редактирование профиля скоро будет доступно!');
+            });
+            
+            // Notification function
+            function showNotification(message) {
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.className = 'alert alert-info alert-dismissible fade show';
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 1050;
+                    min-width: 300px;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                    border-radius: 10px;
+                    border: none;
+                    animation: slideIn 0.3s ease-out;
+                `;
+                
+                notification.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-info-circle me-3" style="font-size: 1.5rem;"></i>
+                        <div>${message}</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // Auto remove after 3 seconds
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 3000);
+            }
+            
+            // Add CSS for slideIn animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from {
+                        opacity: 0;
+                        transform: translateX(100px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>

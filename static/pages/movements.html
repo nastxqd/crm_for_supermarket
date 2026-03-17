@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Перемещения товаров</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #222;
+        }
+
+        .btn-create {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-create:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        /* Селект склада */
+        .warehouse-selector {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .warehouse-selector label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .warehouse-selector select {
+            padding: 10px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 250px;
+        }
+
+        .btn-load {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-load:hover {
+            background: #1d4ed8;
+        }
+
+        /* Вкладки */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            padding: 8px 16px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #6c757d;
+            border-radius: 6px 6px 0 0;
+        }
+
+        .tab-btn.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        /* Фильтры */
+        .filters-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6c757d;
+            margin-bottom: 4px;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn-apply {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-apply:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-clear {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-clear:hover {
+            background: #5a6268;
+        }
+
+        /* Таблица */
+        .movements-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .movements-table th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .movements-table td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .movements-table tbody tr:hover {
+            background-color: #f0f7ff;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-in {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-out {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .badge-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #333;
+        }
+
+        .close {
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        /* Форма */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #2563eb;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 4px;
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .notification-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="navbar"></div>
+
+<main class="container">
+    <div class="header-actions">
+        <h1>📦 Перемещения товаров</h1>
+        <button class="btn-create" id="createMovementBtn">
+            ➕ Создать перемещение
+        </button>
+    </div>
+
+    <!-- Селект склада -->
+    <div class="warehouse-selector">
+        <label for="warehouseId"><strong>Текущий склад:</strong></label>
+        <select id="warehouseId">
+            <option value="">-- Выберите склад --</option>
+            <option value="1">Склад №1 (Основной)</option>
+            <option value="2">Склад №2 (Резервный)</option>
+            <option value="3">Склад №3 (Готовая продукция)</option>
+        </select>
+        <button class="btn-load" id="loadMovementsBtn">Загрузить перемещения</button>
+    </div>
+
+    <!-- Вкладки -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('incoming', this)">📥 Входящие</button>
+        <button class="tab-btn" onclick="switchTab('outgoing', this)">📤 Исходящие</button>
+    </div>
+
+    <!-- Фильтры -->
+    <div class="filters-section">
+        <div class="filters-grid">
+            <div class="filter-group">
+                <label>Склад-отправитель</label>
+                <select id="filterFromWarehouse">
+                    <option value="">Все</option>
+                    <option value="1">Склад №1</option>
+                    <option value="2">Склад №2</option>
+                    <option value="3">Склад №3</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Склад-получатель</label>
+                <select id="filterToWarehouse">
+                    <option value="">Все</option>
+                    <option value="1">Склад №1</option>
+                    <option value="2">Склад №2</option>
+                    <option value="3">Склад №3</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Товар</label>
+                <select id="filterProduct">
+                    <option value="">Все товары</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Дата с</label>
+                <input type="date" id="filterDateFrom">
+            </div>
+            <div class="filter-group">
+                <label>Дата по</label>
+                <input type="date" id="filterDateTo">
+            </div>
+        </div>
+        <div class="filter-actions">
+            <button class="btn-apply" id="applyFiltersBtn">Применить</button>
+            <button class="btn-clear" id="clearFiltersBtn">Сбросить</button>
+        </div>
+    </div>
+
+    <!-- Таблица входящих перемещений -->
+    <div id="incomingTable">
+        <table class="movements-table">
+            <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Номер</th>
+                <th>Товар</th>
+                <th>Откуда</th>
+                <th>Количество</th>
+                <th>Причина</th>
+            </tr>
+            </thead>
+            <tbody id="incomingBody">
+            <tr><td colspan="6" class="empty-state">Выберите склад для загрузки перемещений</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Таблица исходящих перемещений (скрыта по умолчанию) -->
+    <div id="outgoingTable" style="display: none;">
+        <table class="movements-table">
+            <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Номер</th>
+                <th>Товар</th>
+                <th>Куда</th>
+                <th>Количество</th>
+                <th>Причина</th>
+            </tr>
+            </thead>
+            <tbody id="outgoingBody">
+            <tr><td colspan="6" class="empty-state">Выберите склад для загрузки перемещений</td></tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<!-- Модальное окно создания перемещения -->
+<div id="createMovementModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Создание перемещения</h2>
+            <span class="close" onclick="closeCreateModal()">&times;</span>
+        </div>
+
+        <div class="form-group">
+            <label for="movementProduct">Товар</label>
+            <select id="movementProduct" required>
+                <option value="">Выберите товар</option>
+            </select>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="movementFrom">Склад-отправитель</label>
+                <select id="movementFrom" required>
+                    <option value="">Выберите склад</option>
+                    <option value="1">Склад №1</option>
+                    <option value="2">Склад №2</option>
+                    <option value="3">Склад №3</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="movementTo">Склад-получатель</label>
+                <select id="movementTo" required>
+                    <option value="">Выберите склад</option>
+                    <option value="1">Склад №1</option>
+                    <option value="2">Склад №2</option>
+                    <option value="3">Склад №3</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="movementQuantity">Количество</label>
+                <input type="number" id="movementQuantity" min="1" value="1" required>
+            </div>
+            <div class="form-group">
+                <label for="movementDate">Дата</label>
+                <input type="date" id="movementDate" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="movementReason">Причина перемещения</label>
+            <select id="movementReason" required>
+                <option value="">Выберите причину</option>
+                <option value="Пополнение запасов">Пополнение запасов</option>
+                <option value="Перераспределение">Перераспределение</option>
+                <option value="Возврат">Возврат</option>
+                <option value="Ошибка">Ошибка</option>
+                <option value="Другое">Другое</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="movementReference">Номер документа (необязательно)</label>
+            <input type="text" id="movementReference" placeholder="Например: MOV-2024-001">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeCreateModal()">Отмена</button>
+            <button class="btn-create" onclick="createMovement()">Создать</button>
+        </div>
+    </div>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+    // Загружаем навигацию
+    loadNavbar();
+
+    // Состояние приложения
+    let currentWarehouseId = '';
+    let allMovements = [];
+    let products = [];
+    let currentTab = 'incoming';
+
+    // Фильтры
+    let filters = {
+        fromWarehouse: '',
+        toWarehouse: '',
+        productId: '',
+        dateFrom: '',
+        dateTo: ''
+    };
+
+    // ========== ЗАГРУЗКА ДАННЫХ ==========
+
+    async function loadProducts() {
+        try {
+            const response = await fetch('http://localhost:8081/api/products/getAllProducts');
+            if (response.ok) {
+                products = await response.json();
+                populateProductSelects();
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки товаров:', error);
+        }
+    }
+
+    function populateProductSelects() {
+        // Для фильтра
+        const filterSelect = document.getElementById('filterProduct');
+        products.forEach(product => {
+            const option = document.createElement('option');
+            option.value = product.id;
+            option.textContent = product.name;
+            filterSelect.appendChild(option);
+        });
+
+        // Для формы создания
+        const movementSelect = document.getElementById('movementProduct');
+        products.forEach(product => {
+            const option = document.createElement('option');
+            option.value = product.id;
+            option.textContent = product.name;
+            movementSelect.appendChild(option);
+        });
+    }
+
+    async function loadMovements() {
+        const warehouseId = document.getElementById('warehouseId').value;
+
+        if (!warehouseId) {
+            alert('Выберите текущий склад');
+            return;
+        }
+
+        currentWarehouseId = warehouseId;
+
+        try {
+            const response = await fetch('http://localhost:8081/stock-movements');
+            if (!response.ok) {
+                throw new Error(`Ошибка HTTP: ${response.status}`);
+            }
+
+            allMovements = await response.json();
+            applyFilters();
+
+        } catch (error) {
+            console.error('Ошибка загрузки перемещений:', error);
+            showNotification('❌ Ошибка загрузки данных', 'error');
+        }
+    }
+
+    // ========== ФИЛЬТРАЦИЯ ==========
+
+    function updateFilters() {
+        filters = {
+            fromWarehouse: document.getElementById('filterFromWarehouse').value,
+            toWarehouse: document.getElementById('filterToWarehouse').value,
+            productId: document.getElementById('filterProduct').value,
+            dateFrom: document.getElementById('filterDateFrom').value,
+            dateTo: document.getElementById('filterDateTo').value
+        };
+    }
+
+    function applyFilters() {
+        updateFilters();
+
+        let filtered = [...allMovements];
+
+        // Фильтр по складу-отправителю
+        if (filters.fromWarehouse) {
+            filtered = filtered.filter(m => m.fromId == filters.fromWarehouse);
+        }
+
+        // Фильтр по складу-получателю
+        if (filters.toWarehouse) {
+            filtered = filtered.filter(m => m.toId == filters.toWarehouse);
+        }
+
+        // Фильтр по товару
+        if (filters.productId) {
+            filtered = filtered.filter(m => m.productId == filters.productId);
+        }
+
+        // Фильтр по дате с
+        if (filters.dateFrom) {
+            const fromDate = new Date(filters.dateFrom);
+            filtered = filtered.filter(m => new Date(m.movementDate) >= fromDate);
+        }
+
+        // Фильтр по дате по
+        if (filters.dateTo) {
+            const toDate = new Date(filters.dateTo);
+            filtered = filtered.filter(m => new Date(m.movementDate) <= toDate);
+        }
+
+        displayMovements(filtered);
+    }
+
+    function clearFilters() {
+        document.getElementById('filterFromWarehouse').value = '';
+        document.getElementById('filterToWarehouse').value = '';
+        document.getElementById('filterProduct').value = '';
+        document.getElementById('filterDateFrom').value = '';
+        document.getElementById('filterDateTo').value = '';
+
+        updateFilters();
+        applyFilters();
+    }
+
+    // ========== ОТОБРАЖЕНИЕ ==========
+
+    function displayMovements(movements) {
+        // Входящие (на текущий склад)
+        const incoming = movements.filter(m => m.toId == currentWarehouseId);
+        // Исходящие (с текущего склада)
+        const outgoing = movements.filter(m => m.fromId == currentWarehouseId);
+
+        displayIncoming(incoming);
+        displayOutgoing(outgoing);
+    }
+
+    function displayIncoming(movements) {
+        const tbody = document.getElementById('incomingBody');
+
+        if (!movements || movements.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Нет входящих перемещений</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = '';
+        movements.sort((a, b) => new Date(b.movementDate) - new Date(a.movementDate));
+
+        movements.forEach(m => {
+            const row = document.createElement('tr');
+            const product = products.find(p => p.id == m.productId);
+            const productName = product ? product.name : `Товар ${m.productId}`;
+
+            row.innerHTML = `
+                <td>${new Date(m.movementDate).toLocaleDateString()}</td>
+                <td><span class="badge badge-secondary">${m.reference || '—'}</span></td>
+                <td>${productName}</td>
+                <td>Склад ${m.fromId}</td>
+                <td>${m.quantity} шт</td>
+                <td>${m.reason || '—'}</td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    function displayOutgoing(movements) {
+        const tbody = document.getElementById('outgoingBody');
+
+        if (!movements || movements.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Нет исходящих перемещений</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = '';
+        movements.sort((a, b) => new Date(b.movementDate) - new Date(a.movementDate));
+
+        movements.forEach(m => {
+            const row = document.createElement('tr');
+            const product = products.find(p => p.id == m.productId);
+            const productName = product ? product.name : `Товар ${m.productId}`;
+
+            row.innerHTML = `
+                <td>${new Date(m.movementDate).toLocaleDateString()}</td>
+                <td><span class="badge badge-secondary">${m.reference || '—'}</span></td>
+                <td>${productName}</td>
+                <td>Склад ${m.toId}</td>
+                <td>${m.quantity} шт</td>
+                <td>${m.reason || '—'}</td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    // ========== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ==========
+
+    function switchTab(tab, btn) {
+        currentTab = tab;
+
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        if (tab === 'incoming') {
+            document.getElementById('incomingTable').style.display = 'block';
+            document.getElementById('outgoingTable').style.display = 'none';
+        } else {
+            document.getElementById('incomingTable').style.display = 'none';
+            document.getElementById('outgoingTable').style.display = 'block';
+        }
+    }
+
+    // ========== СОЗДАНИЕ ПЕРЕМЕЩЕНИЯ ==========
+
+    function openCreateModal() {
+        const modal = document.getElementById('createMovementModal');
+
+        // Устанавливаем сегодняшнюю дату
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('movementDate').value = today;
+
+        // Устанавливаем текущий склад как отправитель или получатель?
+        if (currentWarehouseId) {
+            // По умолчанию не заполняем, пусть пользователь выбирает
+        }
+
+        modal.style.display = 'block';
+    }
+
+    function closeCreateModal() {
+        document.getElementById('createMovementModal').style.display = 'none';
+        clearCreateForm();
+    }
+
+    function clearCreateForm() {
+        document.getElementById('movementProduct').value = '';
+        document.getElementById('movementFrom').value = '';
+        document.getElementById('movementTo').value = '';
+        document.getElementById('movementQuantity').value = '1';
+        document.getElementById('movementReason').value = '';
+        document.getElementById('movementReference').value = '';
+
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('movementDate').value = today;
+    }
+
+    async function createMovement() {
+        const productId = document.getElementById('movementProduct').value;
+        const fromId = document.getElementById('movementFrom').value;
+        const toId = document.getElementById('movementTo').value;
+        const quantity = document.getElementById('movementQuantity').value;
+        const date = document.getElementById('movementDate').value;
+        const reason = document.getElementById('movementReason').value;
+        const reference = document.getElementById('movementReference').value;
+
+        // Валидация
+        if (!productId) {
+            showNotification('❌ Выберите товар', 'error');
+            return;
+        }
+        if (!fromId) {
+            showNotification('❌ Выберите склад-отправитель', 'error');
+            return;
+        }
+        if (!toId) {
+            showNotification('❌ Выберите склад-получатель', 'error');
+            return;
+        }
+        if (fromId === toId) {
+            showNotification('❌ Склад-отправитель и склад-получатель должны отличаться', 'error');
+            return;
+        }
+        if (!quantity || quantity <= 0) {
+            showNotification('❌ Введите корректное количество', 'error');
+            return;
+        }
+        if (!reason) {
+            showNotification('❌ Выберите причину перемещения', 'error');
+            return;
+        }
+
+        const movement = {
+            productId: parseInt(productId),
+            fromId: parseInt(fromId),
+            toId: parseInt(toId),
+            movementDate: date,
+            quantity: parseInt(quantity),
+            reason: reason,
+            reference: reference || null,
+            type: 'TRANSFER'
+        };
+
+        try {
+            const response = await fetch('http://localhost:8081/stock-movement/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(movement)
+            });
+
+            if (response.ok) {
+                showNotification('✅ Перемещение успешно создано', 'success');
+                closeCreateModal();
+                await loadMovements(); // Перезагружаем список
+            } else {
+                const error = await response.text();
+                showNotification(`❌ Ошибка: ${error}`, 'error');
+            }
+
+        } catch (error) {
+            console.error('Ошибка:', error);
+            showNotification('❌ Ошибка при создании перемещения', 'error');
+        }
+    }
+
+    // ========== УВЕДОМЛЕНИЯ ==========
+
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+
+    // ========== ИНИЦИАЛИЗАЦИЯ ==========
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadProducts();
+
+        document.getElementById('loadMovementsBtn').addEventListener('click', loadMovements);
+        document.getElementById('applyFiltersBtn').addEventListener('click', applyFilters);
+        document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
+        document.getElementById('createMovementBtn').addEventListener('click', openCreateModal);
+
+        // Закрытие модальных окон по клику вне
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('createMovementModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+                clearCreateForm();
+            }
+        });
+    });
+</script>
+</body>
+</html>

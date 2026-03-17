@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить пользователя | Админ панель</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-light: #FCE4EC;
+            --primary: #F48FB1;
+            --primary-dark: #EC407A;
+            --white: #FFFFFF;
+            --light-bg: #F8F9FA;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary-light) 0%, #F3E5F5 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .form-container {
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(244, 143, 177, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .form-title {
+            color: var(--primary-dark);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .form-control-custom {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .form-control-custom:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(244, 143, 177, 0.2);
+        }
+        
+        .btn-custom {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn-custom:hover {
+            background: linear-gradient(to right, var(--primary-dark), #d81b60);
+            transform: translateY(-2px);
+        }
+        
+        .btn-back {
+            background: var(--light-bg);
+            color: var(--primary-dark);
+            border: 2px solid var(--primary-light);
+        }
+        
+        .btn-back:hover {
+            background: var(--primary-light);
+        }
+        
+        .alert {
+            border-radius: 10px;
+            border: none;
+            margin-bottom: 20px;
+        }
+        
+        .select-wrapper {
+            position: relative;
+        }
+        
+        .select-wrapper::after {
+            content: "\f078";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            pointer-events: none;
+        }
+        
+        select.form-control-custom {
+            appearance: none;
+            padding-right: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2 class="form-title">
+            <i class="fas fa-user-plus"></i> Добавить нового пользователя
+        </h2>
+        
+        <!-- Простая форма как для авторизации -->
+        <form method="POST" action="/admin/registUser" id="addUserForm">
+            <input type="text" 
+                   class="form-control-custom" 
+                   name="username" 
+                   placeholder="Имя пользователя (логин)" 
+                   required>
+            
+            <input type="text" 
+                   class="form-control-custom" 
+                   name="fullName" 
+                   placeholder="Полное имя (ФИО)" 
+                   required>
+            
+            <input type="email" 
+                   class="form-control-custom" 
+                   name="email" 
+                   placeholder="Email" 
+                   required>
+            
+            <input type="tel" 
+                   class="form-control-custom" 
+                   name="phone" 
+                   placeholder="Телефон" 
+                   required>
+            
+            <div class="select-wrapper">
+                <select class="form-control-custom" name="role" required>
+                    <option value="">Выберите роль</option>
+                    <option value="ADMIN">Администратор системы</option>
+                    <option value="MANAGER">Менеджер по закупкам</option>
+                    <option value="CLADMAN">Кладовщик</option>
+                </select>
+            </div>
+            
+            <div class="select-wrapper">
+                <select class="form-control-custom" name="department">
+                    <option value="">Выберите отдел (необязательно)</option>
+                    <option value="warehouse">Складской отдел</option>
+                    <option value="purchasing">Отдел закупок</option>
+                    <option value="sales">Отдел продаж</option>
+                    <option value="it">IT отдел</option>
+                </select>
+            </div>
+            
+            <div style="margin: 20px 0;">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" name="sendWelcomeEmail">
+                    <span>Отправить приветственное письмо</span>
+                </label>
+            </div>
+            
+            <!-- Поля для подтверждения администратора -->
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                <h5 style="color: var(--primary-dark); margin-bottom: 15px;">
+                    <i class="fas fa-shield-alt"></i> Подтверждение администратора
+                </h5>
+                
+                <input type="text" 
+                       class="form-control-custom" 
+                       name="adminUsername" 
+                       placeholder="Ваш логин администратора" 
+                       required>
+                
+                <input type="password" 
+                       class="form-control-custom" 
+                       name="adminPassword" 
+                       placeholder="Ваш пароль администратора" 
+                       required>
+            </div>
+            
+            <button type="submit" class="btn-custom">
+                <i class="fas fa-user-plus"></i> Создать пользователя
+            </button>
+            
+            <a href="adminPanel.html" class="btn-custom btn-back">
+                <i class="fas fa-arrow-left"></i> Назад в админ панель
+            </a>
+        </form>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Простой скрипт для уведомлений -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('addUserForm');
+            
+            // Проверка URL на наличие параметра ошибки
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('error')) {
+                showMessage('Ошибка при создании пользователя', 'danger');
+            }
+            if (urlParams.has('success')) {
+                showMessage('Пользователь успешно создан!', 'success');
+            }
+            
+            // Простая валидация перед отправкой
+            form.addEventListener('submit', function(e) {
+                const password = document.querySelector('input[name="password"]').value;
+                if (password.length < 6) {
+                    e.preventDefault();
+                    showMessage('Пароль должен быть не менее 6 символов', 'danger');
+                    return false;
+                }
+                
+                const email = document.querySelector('input[name="email"]').value;
+                if (!email.includes('@')) {
+                    e.preventDefault();
+                    showMessage('Введите корректный email', 'danger');
+                    return false;
+                }
+                
+                return true;
+            });
+        });
+        
+        function showMessage(text, type) {
+            // Создаем уведомление
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 1000;
+                min-width: 300px;
+            `;
+            alert.innerHTML = `
+                <strong>${type === 'success' ? 'Успешно!' : 'Ошибка!'}</strong> ${text}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alert);
+            
+            // Автоматически скрываем через 5 секунд
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

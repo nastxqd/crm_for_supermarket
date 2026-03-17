@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление поставщиками</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #4a5568;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+
+        .nav-links a.active {
+            color: #2563eb;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #222;
+        }
+
+        h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .data-table tbody tr:hover {
+            background-color: #f0f7ff;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .notification-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .notification-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .notification-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .user-info {
+            background: #e7f3ff;
+            border: 1px solid #2563eb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info .role {
+            background: #2563eb;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .contact-info {
+            font-size: 13px;
+            color: #666;
+        }
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-toggle {
+    cursor: pointer;
+    padding: 10px 0;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    min-width: 160px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    border-radius: 6px;
+    z-index: 1000;
+    margin-top: 5px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+/* Показываем меню при наведении на dropdown ИЛИ на само меню */
+.dropdown:hover .dropdown-menu,
+.dropdown-menu:hover {
+    display: block;
+    opacity: 1;
+}
+
+/* Добавляем невидимый мостик между триггером и меню */
+.dropdown::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background: transparent;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 10px 15px;
+    color: #4a5568;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.dropdown-menu a:hover {
+    background: #f0f7ff;
+    color: #2563eb;
+}
+
+/* Для мобильных устройств можно добавить поддержку тапа */
+@media (max-width: 768px) {
+    .dropdown.active .dropdown-menu {
+        display: block;
+        opacity: 1;
+    }
+}
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="logo">Shop</a>
+        <div class="nav-links">
+            <a href="/main">Главная</a>
+            <a href="/admin/pannel" class="active">Панель управления</a>
+            <a href="/batches">Поставки</a>
+            <a href="/inventory">Остатки</a>
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle">Контакты ▼</a>
+                <div class="dropdown-menu">
+                    <a href="/warehouses">Склады</a>
+                    <a href="/suppliers">Поставщики</a>
+                </div>
+            </div>
+            <a href="/profile">Профиль</a>
+            <a href="/login" id="logoutBtn">Выйти</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+    <h1>Управление поставщиками</h1>
+
+    <div class="user-info" id="userInfo" style="display: none;">
+        <div>
+            <strong id="currentUserName"></strong>
+            <span class="role" id="currentUserRole"></span>
+        </div>
+        <div>
+            <span>Склад: <strong id="currentUserWarehouse"></strong></span>
+        </div>
+    </div>
+
+    <div class="header-actions">
+        <h2>Список поставщиков</h2>
+        <button class="btn-primary" onclick="showAddSupplierModal()">+ Добавить поставщика</button>
+    </div>
+
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Контактное лицо</th>
+            <th>Телефон</th>
+            <th>Email</th>
+            <th>Адрес</th>
+            <th>Статус</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody id="suppliersBody">
+        <tr><td colspan="8" class="loading">Загрузка поставщиков...</td></tr>
+        </tbody>
+    </table>
+</main>
+
+<script>
+    const BASE_URL = 'http://localhost:8081';
+
+    let currentUser = null;
+    let suppliers = [];
+
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
+    }
+
+    async function loadCurrentUser() {
+        try {
+            const response = await fetch(`${BASE_URL}/api/user/current`, {
+                credentials: 'include'
+            });
+            if (response.ok) {
+                currentUser = await response.json();
+                displayUserInfo();
+                await loadSuppliers();
+            } else if (response.status === 401) {
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки пользователя:', error);
+            showNotification('Ошибка загрузки данных пользователя', 'error');
+        }
+    }
+
+    function displayUserInfo() {
+        const userInfo = document.getElementById('userInfo');
+        if (!userInfo) return;
+        document.getElementById('currentUserName').textContent = currentUser.fullName || currentUser.username;
+        const roleMap = {
+            'ADMIN': 'Администратор',
+            'MANAGER': 'Менеджер',
+            'STOREKEEPER': 'Кладовщик',
+            'SENIOR_STOREKEEPER': 'Старший кладовщик'
+        };
+        document.getElementById('currentUserRole').textContent = roleMap[currentUser.role] || currentUser.role;
+        document.getElementById('currentUserWarehouse').textContent = currentUser.shopId ? `Склад №${currentUser.shopId}` : 'Не привязан';
+        userInfo.style.display = 'flex';
+    }
+
+    async function loadSuppliers() {
+        const tbody = document.getElementById('suppliersBody');
+        tbody.innerHTML = '<tr><td colspan="8" class="loading">Загрузка поставщиков...</td></tr>';
+        try {
+            const response = await fetch(`${BASE_URL}/api/suppliers/getAllSuppliers`, {
+                credentials: 'include'
+            });
+            if (response.ok) {
+                suppliers = await response.json();
+                displaySuppliers(suppliers);
+            } else {
+                throw new Error('Ошибка загрузки');
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки поставщиков:', error);
+            tbody.innerHTML = '<tr><td colspan="8" class="empty-state">Ошибка загрузки поставщиков</td></tr>';
+            showNotification('Ошибка загрузки поставщиков', 'error');
+        }
+    }
+
+    function displaySuppliers(suppliers) {
+        const tbody = document.getElementById('suppliersBody');
+        if (!suppliers || suppliers.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" class="empty-state">Нет поставщиков</td></tr>';
+            return;
+        }
+        tbody.innerHTML = '';
+        suppliers.forEach(supplier => {
+            const row = document.createElement('tr');
+            const statusClass = supplier.active ? 'status-active' : 'status-inactive';
+            const statusText = supplier.active ? 'Активен' : 'Неактивен';
+            row.innerHTML = `
+                <td>${supplier.id}</td>
+                <td><strong>${supplier.name || '-'}</strong></td>
+                <td>${supplier.contactPerson || '-'}</td>
+                <td>${supplier.phone || '-'}</td>
+                <td>${supplier.email || '-'}</td>
+                <td>${supplier.address || '-'}</td>
+                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                <td class="action-buttons">
+                    <button class="btn-secondary" onclick="editSupplier(${supplier.id})">✏️</button>
+                    ${currentUser?.role === 'ADMIN' ? `<button class="btn-danger" onclick="deleteSupplier(${supplier.id})">🗑️</button>` : ''}
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    function showAddSupplierModal() {
+        showNotification('Функция добавления поставщика в разработке', 'info');
+    }
+
+    function editSupplier(id) {
+        showNotification(`Редактирование поставщика ID ${id} в разработке`, 'info');
+    }
+
+    function deleteSupplier(id) {
+        if (!confirm('Удалить поставщика?')) return;
+        showNotification(`Поставщик удален`, 'success');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadCurrentUser();
+    });
+</script>
+</body>
+</html>

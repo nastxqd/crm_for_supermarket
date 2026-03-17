@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поставки | Складской учёт</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-light: #E3F2FD;      /* Светло-голубой */
+            --primary: #64B5F6;            /* Голубой */
+            --primary-dark: #2196F3;       /* Темно-голубой */
+            --secondary: #FFECB3;          /* Светло-желтый */
+            --accent: #A5D6A7;             /* Салатовый */
+            --success: #4CAF50;            /* Зеленый */
+            --warning: #FFB74D;            /* Оранжевый */
+            --danger: #EF5350;             /* Красный */
+            --text: #5A5A72;               /* Текст */
+            --white: #FFFFFF;
+            --light-bg: #F8F9FA;
+        }
+        
+        * {
+            font-family: 'Nunito', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+        }
+        
+        /* Sidebar стили */
+        .sidebar {
+            background: linear-gradient(to bottom, var(--primary), var(--primary-dark));
+            color: white;
+            min-height: 100vh;
+            box-shadow: 3px 0 15px rgba(33, 150, 243, 0.2);
+            position: fixed;
+            width: 280px;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 30px 20px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-logo {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+        
+        .sidebar-title {
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-subtitle {
+            opacity: 0.9;
+            font-weight: 300;
+            font-size: 0.9rem;
+        }
+        
+        .nav-container {
+            padding: 20px 0;
+        }
+        
+        .nav-item {
+            margin: 5px 15px;
+        }
+        
+        .nav-link-custom {
+            color: rgba(255, 255, 255, 0.85);
+            padding: 15px 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .nav-link-custom:hover, .nav-link-custom.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .nav-link-custom i {
+            width: 25px;
+            font-size: 1.2rem;
+            margin-right: 15px;
+        }
+        
+        .nav-badge {
+            margin-left: auto;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        
+        .nav-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 20px 15px;
+        }
+        
+        /* Main content */
+        .main-content {
+            margin-left: 280px;
+            padding: 20px;
+        }
+        
+        /* Top navbar */
+        .top-navbar {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 15px 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .page-title {
+            color: var(--primary-dark);
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+        
+        /* Content cards */
+        .content-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        .card-header-custom {
+            background: none;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-title {
+            color: var(--primary-dark);
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-title i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+        
+        /* Filter section */
+        .filter-section {
+            background: var(--light-bg);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .filter-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 180px;
+        }
+        
+        .filter-label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .filter-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: var(--white);
+            color: var(--text);
+        }
+        
+        /* Search box */
+        .search-box {
+            position: relative;
+            flex: 2;
+            min-width: 300px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 10px 15px 10px 45px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: var(--white);
+            color: var(--text);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+        }
+        
+        /* Shipments table */
+        .shipments-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .shipments-table th {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 600;
+            padding: 15px;
+            text-align: left;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        .shipments-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .shipments-table tr:hover {
+            background: var(--light-bg);
+        }
+        
+        .shipment-number {
+            color: var(--primary-dark);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .shipment-number:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+        
+        /* Status badges */
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-delivered {
+            background: rgba(76, 175, 80, 0.2);
+            color: #2E7D32;
+        }
+        
+        .status-in-transit {
+            background: rgba(33, 150, 243, 0.2);
+            color: #1565C0;
+        }
+        
+        .status-pending {
+            background: rgba(255, 183, 77, 0.2);
+            color: #EF6C00;
+        }
+        
+        .status-cancelled {
+            background: rgba(239, 83, 80, 0.2);
+            color: #C62828;
+        }
+        
+        /* Warehouse badges */
+        .warehouse-badge {
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            background: var(--light-bg);
+            color: var(--text);
+            display: inline-block;
+        }
+        
+        /* Supplier info */
+        .supplier-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .supplier-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        /* Action buttons */
+        .action-btn {
+            padding: 5px 10px;
+            border-radius: 6px;
+            border: none;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .show-more-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .show-more-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Recent shipments */
+        .recent-shipments {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .shipment-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s;
+        }
+        
+        .shipment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(100, 181, 246, 0.15);
+        }
+        
+        .shipment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .shipment-id {
+            font-weight: 700;
+            color: var(--primary-dark);
+            font-size: 1.1rem;
+        }
+        
+        .shipment-body {
+            margin-bottom: 15px;
+        }
+        
+        .shipment-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .info-label {
+            color: var(--text);
+        }
+        
+        .info-value {
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .shipment-items {
+            background: var(--light-bg);
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        
+        .item-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .item-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .item-list li:last-child {
+            border-bottom: none;
+        }
+        
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 30px;
+        }
+        
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #ddd;
+            background: var(--white);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .page-btn:hover, .page-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 250px;
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .filter-row {
+                flex-direction: column;
+            }
+            
+            .filter-group, .search-box {
+                min-width: 100%;
+            }
+            
+            .recent-shipments {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .shipments-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .top-navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .user-menu {
+                align-self: flex-end;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .content-card {
+            animation: fadeIn 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-warehouse"></i>
+            </div>
+            <h3 class="sidebar-title">Складской учёт</h3>
+            <p class="sidebar-subtitle">Панель кладовщика</p>
+        </div>
+        
+        <div class="nav-container">
+            <div class="nav-item">
+                <a href="cladmanprofile.html" class="nav-link-custom">
+                    <i class="fas fa-user-circle"></i>
+                    Мой профиль
+                </a>
+            </div>
+            
+            <div class="nav-divider"></div>
+            
+            <div class="nav-item">
+                <a href="branches.html" class="nav-link-custom active">
+                    <i class="fas fa-truck-loading"></i>
+                    Поставки
+                    <span class="nav-badge">24</span>
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="transfers.html" class="nav-link-custom">
+                    <i class="fas fa-exchange-alt"></i>
+                    Перемещения
+                    <span class="nav-badge">8</span>
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="writeoffs.html" class="nav-link-custom">
+                    <i class="fas fa-minus-circle"></i>
+                    Списания
+                    <span class="nav-badge">3</span>
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="inventory.html" class="nav-link-custom">
+                    <i class="fas fa-boxes"></i>
+                    Инвентаризация
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="reports.html" class="nav-link-custom">
+                    <i class="fas fa-clipboard-list"></i>
+                    Отчёты
+                </a>
+            </div>
+            
+            <div class="nav-divider"></div>
+            
+            <div class="nav-item">
+                <a href="settings.html" class="nav-link-custom">
+                    <i class="fas fa-cog"></i>
+                    Настройки
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="index.html" class="nav-link-custom">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Выйти
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <div class="top-navbar">
+            <div>
+                <h1 class="page-title">Управление поставками</h1>
+                <p class="text-muted mb-0">Просмотр и управление всеми поставками товаров</p>
+            </div>
+            
+            <div class="user-menu">
+                <div class="position-relative">
+                    <button class="btn btn-outline-primary position-relative">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">5</span>
+                    </button>
+                </div>
+                
+                <div class="dropdown">
+                    <button class="btn btn-link text-dark text-decoration-none dropdown-toggle d-flex align-items-center" 
+                            type="button" data-bs-toggle="dropdown">
+                        <div class="me-2 text-end">
+                            <div class="fw-bold">Иван Петров</div>
+                            <small class="text-muted">Кладовщик</small>
+                        </div>
+                        <img src="https://ui-avatars.com/api/?name=Иван+Петров&background=64B5F6&color=fff&size=50" 
+                             class="rounded-circle" alt="Аватар">
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="cladmanprofile.html"><i class="fas fa-user me-2"></i>Профиль</a></li>
+                        <li><a class="dropdown-item" href="settings.html"><i class="fas fa-cog me-2"></i>Настройки</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="index.html"><i class="fas fa-sign-out-alt me-2"></i>Выйти</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Shipments Section -->
+        <div class="content-card">
+            <div class="card-header-custom">
+                <h3 class="card-title">
+                    <i class="fas fa-clock"></i> Последние поставки
+                </h3>
+                <a href="#all-shipments" class="btn btn-sm btn-outline-primary">Показать все</a>
+            </div>
+            
+            <div class="recent-shipments">
+                <!-- Shipment 1 -->
+                <div class="shipment-card">
+                    <div class="shipment-header">
+                        <span class="shipment-id">#SP-4582</span>
+                        <span class="status-badge status-delivered">Доставлено</span>
+                    </div>
+                    <div class="shipment-body">
+                        <div class="shipment-info">
+                            <span class="info-label">Поставщик:</span>
+                            <span class="info-value">ООО "ТехноПоставка"</span>
+                        </div>
+                        <div class="shipment-info">
+                            <span class="info-label">Дата:</span>
+                            <span class="info-value">25.12.2024</span>
+                        </div>
+                        <div class="shipment-info">
+                            <span class="info-label">Склад:</span>
+                            <span class="warehouse-badge">Основной склад</span>
+                        </div>
+                        <div class="shipment-info">
+                            <span class="info-label">Сумма:</span>
+                            <span class="info-value">₽245,800</span>
+                        </div>
+                    </div>
+                    <div class="shipment-items">
+                        <ul class="item-list">
+                            <li><strong>45 шт.</strong> Смартфон XYZ</li>
+                            <li><strong>120 шт.</strong> Наушники Pro</li>
+                            <li><strong>60 шт.</strong> Power Bank 20000mAh</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Shipment 2 -->
+                <div class="shipment-card">
+                    <div class="shipment-header">
+                        <span class="shipment-id">#SP-4581</span>
+                        <span class="status-badge status-in-transit">В пути</span>
+                    </div>
+                    <div class="shipment-body">
+                        <div class="shipment-info">
+                            <span class="info-label">Поставщик:</span>
+                            <span class="info-value">ИП Сидоров</span>
+                        </div>
+                        <div class="shipment-info">
+                            <span class="info-label">Дата:</span>
+                            <span class="info-value">24.12.2024</span>
+                        </div>
+                        <div class="shipment-info">
+                            <span class="info-label">Склад:</span>
+                            <span class="warehouse-badge">Склад А</span>
+                        </div>
+                        <div class="shipment-info">
+                            <span class="info-label">Сумма:</span>
+                            <span class="info-value">₽89,500</span>
+                        </div>
+                    </div>
+                    <div class="shipment-items">
+                        <ul class="item-list">
+                            <li><strong>200 шт.</strong> Кабель USB-C</li>
+                            <li><strong>150 шт.</strong> Зарядное устройство</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Shipment 3 -->
+                <div class="shipment-card">
+                    <div class="shipment-header">
+                        <span class="shipment-id">#SP-4580</span>
+                        <span class="status-badge status-pending">Ожидает</span>
+                    </div>
+                    <div class="shipment-body">
+                        <div class="shipment-info">
+                            <span class="info-label">Поставщик:</span>
+                            <span class="info-value">АО "Электроника+"</span>
+                        </div>
+                        <div class="shipment-info">
+                            <span class="info-label">Дата:</span>
+                            <span class="info-value">23.12.2024</span>
+                        </div>
+                        <div class="shipment-info">
+                            <span class="info-label">Склад:</span>
+                            <span class="warehouse-badge">Холодильный склад</span>
+                        </div>
+                        <div class="shipment-info">
+                            <span class="info-label">Сумма:</span>
+                            <span class="info-value">₽312,000</span>
+                        </div>
+                    </div>
+                    <div class="shipment-items">
+                        <ul class="item-list">
+                            <li><strong>50 шт.</strong> Холодильник Frost</li>
+                            <li><strong>30 шт.</strong> Морозильная камера</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Shipment 4 -->
+                <div class="shipment-card">
+                    <div class="shipment-header">
+                        <span class="shipment-id">#SP-4579</span>
+                        <span class="status-badge status-delivered">Доставлено</span>
+                    </div>
+                    <div class="shipment-body">
+                        <div class="shipment-info">
+                            <span class="info-label">Поставщик:</span>
+                            <span class="info-value">ООО "МеталлСервис"</span>
+                        </div>
+                        <div class="shipment-info">
+                            <span class="info-label">Дата:</span>
+                            <span class="info-value">22.12.2024</span>
+                        </div>
+                        <div class="shipment-info">
+                            <span class="info-label">Склад:</span>
+                            <span class="warehouse-badge">Склад Б</span>
+                        </div>
+                        <div class="shipment-info">
+                            <span class="info-label">Сумма:</span>
+                            <span class="info-value">ₔ156,300</span>
+                        </div>
+                    </div>
+                    <div class="shipment-items">
+                        <ul class="item-list">
+                            <li><strong>500 шт.</strong> Болт М8</li>
+                            <li><strong>300 шт.</strong> Гайка М8</li>
+                            <li><strong>200 шт.</strong> Шайба 8мм</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- All Shipments Section -->
+        <div class="content-card" id="all-shipments">
+            <div class="card-header-custom">
+                <h3 class="card-title">
+                    <i class="fas fa-list-alt"></i> Все поставки
+                </h3>
+                <button class="btn btn-sm btn-primary" onclick="showNewShipmentModal()">
+                    <i class="fas fa-plus me-1"></i> Новая поставка
+                </button>
+            </div>
+            
+            <!-- Filters -->
+            <div class="filter-section">
+                <div class="filter-row">
+                    <div class="search-box">
+                        <span class="search-icon">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" class="search-input" placeholder="Поиск по номеру поставки..." id="shipmentSearch">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Дата от</label>
+                        <input type="date" class="filter-control" id="dateFrom">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Дата до</label>
+                        <input type="date" class="filter-control" id="dateTo">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Склад</label>
+                        <select class="filter-control" id="warehouseFilter">
+                            <option value="">Все склады</option>
+                            <option value="main">Основной склад</option>
+                            <option value="a">Склад А</option>
+                            <option value="b">Склад Б</option>
+                            <option value="cold">Холодильный склад</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Поставщик</label>
+                        <select class="filter-control" id="supplierFilter">
+                            <option value="">Все поставщики</option>
+                            <option value="1">ООО "ТехноПоставка"</option>
+                            <option value="2">ИП Сидоров</option>
+                            <option value="3">АО "Электроника+"</option>
+                            <option value="4">ООО "МеталлСервис"</option>
+                            <option value="5">ЗАО "СтройМатериалы"</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Статус</label>
+                        <select class="filter-control" id="statusFilter">
+                            <option value="">Все статусы</option>
+                            <option value="delivered">Доставлено</option>
+                            <option value="in-transit">В пути</option>
+                            <option value="pending">Ожидает</option>
+                            <option value="cancelled">Отменено</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="applyFilters()">
+                        <i class="fas fa-filter me-1"></i> Применить
+                    </button>
+                    
+                    <button class="btn btn-outline-secondary" onclick="resetFilters()">
+                        <i class="fas fa-redo me-1"></i> Сбросить
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Shipments Table -->
+            <div class="table-responsive">
+                <table class="shipments-table">
+                    <thead>
+                        <tr>
+                            <th>Номер</th>
+                            <th>Дата</th>
+                            <th>Поставщик</th>
+                            <th>Склад</th>
+                            <th>Товары</th>
+                            <th>Сумма</th>
+                            <th>Статус</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="shipmentsTableBody">
+                        <!-- Shipment 1 -->
+                        <tr>
+                            <td><a href="#" class="shipment-number">#SP-4582</a></td>
+                            <td>25.12.2024</td>
+                            <td>
+                                <div class="supplier-info">
+                                    <img src="https://ui-avatars.com/api/?name=ТехноПоставка&background=2196F3&color=fff&size=30" 
+                                         class="supplier-avatar" alt="Поставщик">
+                                    <span>ООО "ТехноПоставка"</span>
+                                </div>
+                            </td>
+                            <td><span class="warehouse-badge">Основной склад</span></td>
+                            <td>3 позиции</td>
+                            <td>₽245,800</td>
+                            <td><span class="status-badge status-delivered">Доставлено</span></td>
+                            <td>
+                                <button class="action-btn" title="Просмотреть">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn" title="Редактировать">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <!-- Shipment 2 -->
+                        <tr>
+                            <td><a href="#" class="shipment-number">#SP-4581</a></td>
+                            <td>24.12.2024</td>
+                            <td>
+                                <div class="supplier-info">
+                                    <img src="https://ui-avatars.com/api/?name=ИП+Сидоров&background=4CAF50&color=fff&size=30" 
+                                         class="supplier-avatar" alt="Поставщик">
+                                    <span>ИП Сидоров</span>
+                                </div>
+                            </td>
+                            <td><span class="warehouse-badge">Склад А</span></td>
+                            <td>2 позиции</td>
+                            <td>₽89,500</td>
+                            <td><span class="status-badge status-in-transit">В пути</span></td>
+                            <td>
+                                <button class="action-btn" title="Просмотреть">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn" title="Отметить полученным">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <!-- Shipment 3 -->
+                        <tr>
+                            <td><a href="#" class="shipment-number">#SP-4580</a></td>
+                            <td>23.12.2024</td>
+                            <td>
+                                <div class="supplier-info">
+                                    <img src="https://ui-avatars.com/api/?name=Электроника+&background=FF9800&color=fff&size=30" 
+                                         class="supplier-avatar" alt="Поставщик">
+                                    <span>АО "Электроника+"</span>
+                                </div>
+                            </td>
+                            <td><span class="warehouse-badge">Холодильный склад</span></td>
+                            <td>2 позиции</td>
+                            <td>₽312,000</td>
+                            <td><span class="status-badge status-pending">Ожидает</span></td>
+                            <td>
+                                <button class="action-btn" title="Просмотреть">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn" title="Подтвердить">
+                                    <i class="fas fa-check-circle"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <!-- Shipment 4 -->
+                        <tr>
+                            <td><a href="#" class="shipment-number">#SP-4579</a></td>
+                            <td>22.12.2024</td>
+                            <td>
+                                <div class="supplier-info">
+                                    <img src="https://ui-avatars.com/api/?name=МеталлСервис&background=795548&color=fff&size=30" 
+                                         class="supplier-avatar" alt="Поставщик">
+                                    <span>ООО "МеталлСервис"</span>
+                                </div>
+                            </td>
+                            <td><span class="warehouse-badge">Склад Б</span></td>
+                            <td>3 позиции</td>
+                            <td>₽156,300</td>
+                            <td><span class="status-badge status-delivered">Доставлено</span></td>
+                            <td>
+                                <button class="action-btn" title="Просмотреть">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn" title="Распечатать">
+                                    <i class="fas fa-print"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <!-- Shipment 5 -->
+                        <tr>
+                            <td><a href="#" class="shipment-number">#SP-4578</a></td>
+                            <td>21.12.2024</td>
+                            <td>
+                                <div class="supplier-info">
+                                    <img src="https://ui-avatars.com/api/?name=СтройМатериалы&background=9C27B0&color=fff&size=30" 
+                                         class="supplier-avatar" alt="Поставщик">
+                                    <span>ЗАО "СтройМатериалы"</span>
+                                </div>
+                            </td>
+                            <td><span class="warehouse-badge">Основной склад</span></td>
+                            <td>5 позиций</td>
+                            <td>ₔ421,500</td>
+                            <td><span class="status-badge status-delivered">Доставлено</span></td>
+                            <td>
+                                <button class="action-btn" title="Просмотреть">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn" title="Распечатать">
+                                    <i class="fas fa-print"></i>

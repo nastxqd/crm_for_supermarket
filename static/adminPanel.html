@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ панель | Система управления</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js для графиков -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-light: #FCE4EC;      /* Светло-розовый */
+            --primary: #F48FB1;            /* Розовый */
+            --primary-dark: #EC407A;       /* Темно-розовый */
+            --secondary: #F3E5F5;          /* Светло-фиолетовый */
+            --accent: #CE93D8;             /* Сиреневый */
+            --success: #81C784;            /* Светло-зеленый */
+            --warning: #FFB74D;            /* Оранжевый */
+            --danger: #EF5350;             /* Красный */
+            --info: #4FC3F7;               /* Голубой */
+            --text: #5A5A72;               /* Текст */
+            --white: #FFFFFF;
+            --light-bg: #F8F9FA;
+            --dark-bg: #2D3748;
+        }
+        
+        * {
+            font-family: 'Nunito', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+        }
+        
+        /* Sidebar стили */
+        .sidebar {
+            background: linear-gradient(to bottom, var(--primary), var(--primary-dark));
+            color: white;
+            min-height: 100vh;
+            box-shadow: 3px 0 15px rgba(236, 64, 122, 0.2);
+            position: fixed;
+            width: 280px;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 30px 20px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-logo {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+        
+        .sidebar-title {
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-subtitle {
+            opacity: 0.9;
+            font-weight: 300;
+            font-size: 0.9rem;
+        }
+        
+        .nav-container {
+            padding: 20px 0;
+        }
+        
+        .nav-item {
+            margin: 5px 15px;
+        }
+        
+        .nav-link-custom {
+            color: rgba(255, 255, 255, 0.85);
+            padding: 15px 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .nav-link-custom:hover, .nav-link-custom.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .nav-link-custom i {
+            width: 25px;
+            font-size: 1.2rem;
+            margin-right: 15px;
+        }
+        
+        .nav-badge {
+            margin-left: auto;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        
+        .nav-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 20px 15px;
+        }
+        
+        /* Main content */
+        .main-content {
+            margin-left: 280px;
+            padding: 20px;
+        }
+        
+        /* Top navbar */
+        .top-navbar {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 15px 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .page-title {
+            color: var(--primary-dark);
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+        
+        /* Stats cards */
+        .stats-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            height: 100%;
+            border-top: 5px solid var(--primary);
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(244, 143, 177, 0.15);
+        }
+        
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+        
+        .stats-icon.users {
+            background: rgba(244, 143, 177, 0.1);
+            color: var(--primary-dark);
+        }
+        
+        .stats-icon.sales {
+            background: rgba(129, 199, 132, 0.1);
+            color: var(--success);
+        }
+        
+        .stats-icon.orders {
+            background: rgba(79, 195, 247, 0.1);
+            color: var(--info);
+        }
+        
+        .stats-icon.revenue {
+            background: rgba(206, 147, 216, 0.1);
+            color: var(--accent);
+        }
+        
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .stats-label {
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+        
+        /* Dashboard cards */
+        .dashboard-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            height: 100%;
+        }
+        
+        .card-header-custom {
+            background: none;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-title {
+            color: var(--primary-dark);
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-title i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        
+        /* Recent activity */
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.3s;
+        }
+        
+        .activity-item:hover {
+            background: var(--light-bg);
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-time {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 5px;
+        }
+        
+        /* Quick stats */
+        .quick-stat {
+            background: linear-gradient(135deg, var(--primary-light), var(--secondary));
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            color: var(--primary-dark);
+        }
+        
+        .quick-stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .quick-stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* Data table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .data-table th {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 600;
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .data-table tr:hover {
+            background: var(--light-bg);
+        }
+        
+        /* Status badges */
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: rgba(129, 199, 132, 0.2);
+            color: #2E7D32;
+        }
+        
+        .status-inactive {
+            background: rgba(239, 83, 80, 0.2);
+            color: #C62828;
+        }
+        
+        .status-pending {
+            background: rgba(255, 183, 77, 0.2);
+            color: #EF6C00;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 250px;
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .stats-card, .dashboard-card {
+            animation: fadeIn 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-crown"></i>
+            </div>
+            <h3 class="sidebar-title">Админ Панель</h3>
+            <p class="sidebar-subtitle">Система управления</p>
+        </div>
+        
+        <div class="nav-container">
+            <div class="nav-item">
+                <a href="adminPanel.html" class="nav-link-custom active">
+                    <i class="fas fa-chart-line"></i>
+                    Отчеты
+                </a>
+            </div>
+            
+            <div class="nav-divider"></div>
+            
+            <div class="nav-item">
+                <a href="users.html" class="nav-link-custom">
+                    <i class="fas fa-users"></i>
+                    Пользователи
+                    <span class="nav-badge">42</span>
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="directories.html" class="nav-link-custom">
+                    <i class="fas fa-book"></i>
+                    Справочники
+                    <span class="nav-badge">8</span>
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="settings.html" class="nav-link-custom">
+                    <i class="fas fa-cog"></i>
+                    Настройки
+                </a>
+            </div>
+            
+            <div class="nav-divider"></div>
+            
+            <div class="nav-item">
+                <a href="warehouse.html" class="nav-link-custom">
+                    <i class="fas fa-warehouse"></i>
+                    Склады
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="purchasing.html" class="nav-link-custom">
+                    <i class="fas fa-shopping-cart"></i>
+                    Закупки
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="analytics.html" class="nav-link-custom">
+                    <i class="fas fa-chart-bar"></i>
+                    Аналитика
+                </a>
+            </div>
+            
+            <div class="nav-divider"></div>
+            
+            <div class="nav-item">
+                <a href="index.html" class="nav-link-custom">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Выйти
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <div class="top-navbar">
+            <div>
+                <h1 class="page-title">Панель управления администратора</h1>
+                <p class="text-muted mb-0">Обзор системы и ключевые показатели</p>
+            </div>
+            
+            <div class="user-menu">
+                <div class="position-relative">
+                    <button class="btn btn-outline-primary position-relative">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">7</span>
+                    </button>
+                </div>
+                
+                <div class="dropdown">
+                    <button class="btn btn-link text-dark text-decoration-none dropdown-toggle d-flex align-items-center" 
+                            type="button" data-bs-toggle="dropdown">
+                        <div class="me-2 text-end">
+                            <div class="fw-bold">Администратор</div>
+                            <small class="text-muted">Главный администратор</small>
+                        </div>
+                        <img src="https://ui-avatars.com/api/?name=Администратор&background=EC407A&color=fff&size=50" 
+                             class="rounded-circle" alt="Аватар">
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Профиль</a></li>
+                        <li><a class="dropdown-item" href="settings.html"><i class="fas fa-cog me-2"></i>Настройки</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="index.html"><i class="fas fa-sign-out-alt me-2"></i>Выйти</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-4">
+                <div class="stats-card">
+                    <div class="stats-icon users">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stats-number">1,248</div>
+                    <div class="stats-label">Всего пользователей</div>
+                    <small class="text-success">
+                        <i class="fas fa-arrow-up"></i> 12% за месяц
+                    </small>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <div class="stats-card">
+                    <div class="stats-icon sales">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stats-number">₽4.2M</div>
+                    <div class="stats-label">Общий оборот</div>
+                    <small class="text-success">
+                        <i class="fas fa-arrow-up"></i> 18% рост
+                    </small>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <div class="stats-card">
+                    <div class="stats-icon orders">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="stats-number">5,842</div>
+                    <div class="stats-label">Заказов за месяц</div>
+                    <small class="text-success">
+                        <i class="fas fa-arrow-up"></i> 7% больше
+                    </small>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <div class="stats-card">
+                    <div class="stats-icon revenue">
+                        <i class="fas fa-ruble-sign"></i>
+                    </div>
+                    <div class="stats-number">₽892K</div>
+                    <div class="stats-label">Прибыль за месяц</div>
+                    <small class="text-success">
+                        <i class="fas fa-arrow-up"></i> 15% рост
+                    </small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Charts Section -->
+        <div class="row mb-4">
+            <!-- Sales Chart -->
+            <div class="col-lg-8 mb-4">
+                <div class="dashboard-card">
+                    <div class="card-header-custom">
+                        <h3 class="card-title">
+                            <i class="fas fa-chart-line"></i> Динамика продаж
+                        </h3>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                За месяц
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">За день</a></li>
+                                <li><a class="dropdown-item" href="#">За неделю</a></li>
+                                <li><a class="dropdown-item" href="#">За месяц</a></li>
+                                <li><a class="dropdown-item" href="#">За год</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- User Activity -->
+            <div class="col-lg-4 mb-4">
+                <div class="dashboard-card">
+                    <div class="card-header-custom">
+                        <h3 class="card-title">
+                            <i class="fas fa-user-check"></i> Активность пользователей
+                        </h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="userActivityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Additional Charts and Data -->
+        <div class="row">
+            <!-- Revenue by Category -->
+            <div class="col-lg-6 mb-4">
+                <div class="dashboard-card">
+                    <div class="card-header-custom">
+                        <h3 class="card-title">
+                            <i class="fas fa-chart-pie"></i> Доход по категориям
+                        </h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Orders -->
+            <div class="col-lg-6 mb-4">
+                <div class="dashboard-card">
+                    <div class="card-header-custom">
+                        <h3 class="card-title">
+                            <i class="fas fa-list-alt"></i> Последние заказы
+                        </h3>
+                        <a href="orders.html" class="btn btn-sm btn-outline-primary">Все заказы</a>
+                    </div>
+                    <div style="max-height: 300px; overflow-y: auto;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Клиент</th>
+                                    <th>Сумма</th>
+                                    <th>Статус</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#5842</td>
+                                    <td>Иванов А.С.</td>
+                                    <td>₽42,500</td>
+                                    <td><span class="status-badge status-active">Выполнен</span></td>
+                                </tr>
+                                <tr>
+                                    <td>#5841</td>
+                                    <td>ООО "Техно"</td>
+                                    <td>₽128,300</td>
+                                    <td><span class="status-badge status-active">Выполнен</span></td>
+                                </tr>
+                                <tr>
+                                    <td>#5840</td>
+                                    <td>Петрова Е.В.</td>
+                                    <td>₽24,800</td>
+                                    <td><span class="status-badge status-pending">В обработке</span></td>
+                                </tr>
+                                <tr>
+                                    <td>#5839</td>
+                                    <td>Сидоров П.И.</td>
+                                    <td>₽56,200</td>
+                                    <td><span class="status-badge status-active">Доставка</span></td>
+                                </tr>
+                                <tr>
+                                    <td>#5838</td>
+                                    <td>АО "Строймаш"</td>
+                                    <td>₽312,000</td>
+                                    <td><span class="status-badge status-active">Оплачен</span></td>
+                                </tr>
+                                <tr>
+                                    <td>#5837</td>
+                                    <td>Козлов М.А.</td>
+                                    <td>₽18,900</td>
+                                    <td><span class="status-badge status-inactive">Отменен</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Stats and Recent Activity -->
+        <div class="row">
+            <!-- Quick Stats -->
+            <div class="col-lg-8 mb-4">
+                <div class="dashboard-card">
+                    <div class="card-header-custom">
+                        <h3 class="card-title">
+                            <i class="fas fa-tachometer-alt"></i> Быстрая статистика
+                        </h3>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="quick-stat">
+                                <div class="quick-stat-number">92%</div>
+                                <div class="quick-stat-label">Заполненность складов</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="quick-stat">
+                                <div class="quick-stat-number">47</div>
+                                <div class="quick-stat-label">Новых заявок</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="quick-stat">
+                                <div class="quick-stat-number">18</div>
+                                <div class="quick-stat-label">Активных сессий</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="quick-stat">
+                                <div class="quick-stat-number">4.8</div>
+                                <div class="quick-stat-label">Средняя оценка</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="quick-stat">
+                                <div class="quick-stat-number">142</div>
+                                <div class="quick-stat-label">Обращений в поддержку</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="quick-stat">
+                                <div class="quick-stat-number">₽2.1M</div>
+                                <div class="quick-stat-label">Средний чек</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="quick-stat">
+                                <div class="quick-stat-number">89%</div>
+                                <div class="quick-stat-label">Удовлетворенность</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="quick-stat">
+                                <div class="quick-stat-number">24ч</div>
+                                <div class="quick-stat-label">Среднее время ответа</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="col-lg-4 mb-4">
+                <div class="dashboard-card h-100">
+                    <div class="card-header-custom">
+                        <h3 class="card-title">
+                            <i class="fas fa-history"></i> Последние действия
+                        </h3>
+                    </div>
+                    <div class="activity-list" style="max-height: 300px; overflow-y: auto;">
+                        <div class="activity-item">
+                            <div class="activity-icon" style="background: rgba(244, 143, 177, 0.1); color: var(--primary-dark);">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="fw-bold">Новый пользователь</div>
+                                <p class="mb-1">Зарегистрирован новый кладовщик</p>
+                                <div class="activity-time">10 минут назад</div>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon" style="background: rgba(129, 199, 132, 0.1); color: var(--success);">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="fw-bold">Крупный заказ</div>
+                                <p class="mb-1">Заказ #5842 на ₽42,500 завершен</p>
+                                <div class="activity-time">1 час назад</div>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon" style="background: rgba(79, 195, 247, 0.1); color: var(--info);">
+                                <i class="fas fa-warehouse"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="fw-bold">Поступление товара</div>
+                                <p class="mb-1">На склад поступило 150 единиц товара</p>
+                                <div class="activity-time">2 часа назад</div>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon" style="background: rgba(255, 183, 77, 0.1); color: var(--warning);">
+                                <i class="fas fa-cog"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="fw-bold">Обновление системы</div>
+                                <p class="mb-1">Обновлены настройки безопасности</p>
+                                <div class="activity-time">Сегодня, 09:30</div>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon" style="background: rgba(206, 147, 216, 0.1); color: var(--accent);">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="fw-bold">Отчет сгенерирован</div>
+                                <p class="mb-1">Финансовый отчет за ноябрь 2024</p>
+                                <div class="activity-time">Вчера, 16:45</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const mobileMenuBtn = document.createElement('button');
+            mobileMenuBtn.className = 'btn btn-primary d-lg-none mobile-menu-btn';
+            mobileMenuBtn.style.cssText = 'position: fixed; top: 20px; left: 20px; z-index: 1001; background: var(--primary-dark); border: none;';
+            mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            document.body.appendChild(mobileMenuBtn);
+            
+            mobileMenuBtn.addEventListener('click', function() {
+                document.querySelector('.sidebar').classList.toggle('active');
+            });
+            
+            // Initialize Charts
+            initCharts();
+            
+            // Initialize chart data and options
+            function initCharts() {
+                // Sales Chart
+                const salesCtx = document.getElementById('salesChart').getContext('2d');
+                const salesChart = new Chart(salesCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['1 нед', '2 нед', '3 нед', '4 нед', '5 нед', '6 нед'],
+                        datasets: [{
+                            label: 'Продажи (тыс. ₽)',
+                            data: [450, 520, 480, 610, 580, 720],
+                            borderColor: '#EC407A',
+                            backgroundColor: 'rgba(236, 64, 122, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                // User Activity Chart
+                const userActivityCtx = document.getElementById('userActivityChart').getContext('2d');
+                const userActivityChart = new Chart(userActivityCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Админы', 'Кладовщики', 'Менеджеры', 'Покупатели'],
+                        datasets: [{
+                            data: [15, 42, 28, 1203],
+                            backgroundColor: [
+                                '#EC407A',
+                                '#F48FB1',
+                                '#CE93D8',
+                                '#F3E5F5'
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+                
+                // Revenue Chart
+                const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+                const revenueChart = new Chart(revenueCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Электроника', 'Одежда', 'Продукты', 'Мебель', 'Книги', 'Игрушки'],
+                        datasets: [{
+                            label: 'Доход (тыс. ₽)',
+                            data: [1200, 800, 600, 400, 300, 200],
+                            backgroundColor: [
+                                '#EC407A',
+                                '#F48FB1',
+                                '#CE93D8',
+                                '#81C784',
+                                '#4FC3F7',
+                                '#FFB74D'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Update charts on window resize
+            window.addEventListener('resize', function() {
+                // Charts auto-resize with Chart.js
+            });
+            
+            // Notification button
+            document.querySelector('.btn-outline-primary').addEventListener('click', function() {
+                showNotification('У вас 7 новых уведомлений');
+            });
+            
+            // Notification function
+            function showNotification(message) {
+                const notification = document.createElement('div');
+                notification.className = 'alert alert-info alert-dismissible fade show';
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 1050;
+                    min-width: 300px;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                    border-radius: 10px;
+                    border: none;
+                    background: var(--white);
+                    border-left: 5px solid var(--primary);
+                `;
+                
+                notification.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-bell me-3" style="font-size: 1.5rem; color: var(--primary);"></i>
+                        <div>${message}</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>

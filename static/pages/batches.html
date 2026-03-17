@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Поставки моего склада</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: #f5f5f5;
+        padding: 20px;
+    }
+
+    .navbar {
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 1rem 2rem;
+        margin-bottom: 20px;
+        border-radius: 8px;
+    }
+
+    .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .logo {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2563eb;
+        text-decoration: none;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 2rem;
+    }
+
+    .nav-links a {
+        color: #4a5568;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+        color: #2563eb;
+    }
+
+    .nav-links a.active {
+        color: #2563eb;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .header-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    h1 {
+        font-size: 24px;
+        color: #222;
+    }
+
+    .btn-primary {
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.2s;
+        display: inline-block;
+    }
+
+    .btn-primary:hover {
+        background: #1d4ed8;
+    }
+
+    .btn-success {
+        background: #28a745;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background 0.2s;
+    }
+
+    .btn-success:hover {
+        background: #218838;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: background 0.2s;
+    }
+
+    .btn-secondary:hover {
+        background: #5a6268;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: background 0.2s;
+    }
+
+    .btn-danger:hover {
+        background: #c82333;
+    }
+
+    .warehouse-selector {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border: 1px solid #dee2e6;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .warehouse-selector label {
+        font-weight: 600;
+        color: #495057;
+        min-width: 100px;
+    }
+
+    .warehouse-selector select {
+        padding: 10px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        font-size: 14px;
+        min-width: 250px;
+        background: white;
+    }
+
+    .warehouse-selector select:focus {
+        border-color: #2563eb;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    .warehouse-info {
+        padding: 10px 16px;
+        background: #e9ecef;
+        border-radius: 6px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .filters-section {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid #dee2e6;
+    }
+
+    .filters-title {
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #495057;
+        font-size: 16px;
+    }
+
+    .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .filter-group label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #6c757d;
+        margin-bottom: 4px;
+    }
+
+    .filter-group input,
+    .filter-group select {
+        padding: 8px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        font-size: 14px;
+        background: white;
+    }
+
+    .filter-group input:focus,
+    .filter-group select:focus {
+        border-color: #2563eb;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    .date-range {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .date-range input {
+        flex: 1;
+    }
+
+    .filter-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 15px;
+    }
+
+    .btn-apply {
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background 0.2s;
+    }
+
+    .btn-apply:hover {
+        background: #1d4ed8;
+    }
+
+    .btn-clear {
+        background: #6c757d;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background 0.2s;
+    }
+
+    .btn-clear:hover {
+        background: #5a6268;
+    }
+
+    .active-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px dashed #ced4da;
+    }
+
+    .filter-tag {
+        background: #e9ecef;
+        padding: 4px 10px;
+        border-radius: 16px;
+        font-size: 13px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .filter-tag button {
+        background: none;
+        border: none;
+        color: #6c757d;
+        cursor: pointer;
+        font-size: 16px;
+        padding: 0 4px;
+        transition: color 0.2s;
+    }
+
+    .filter-tag button:hover {
+        color: #dc3545;
+    }
+
+    .batches-list {
+        min-height: 200px;
+        margin-bottom: 30px;
+    }
+
+    .batch-card {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .batch-card:hover {
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        border-color: #2563eb;
+        transform: translateY(-2px);
+    }
+
+    .batch-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 500;
+    }
+
+    .batch-number {
+        font-size: 16px;
+        color: #2563eb;
+        font-weight: 600;
+    }
+
+    .batch-stats {
+        display: flex;
+        gap: 20px;
+        color: #6c757d;
+        font-size: 14px;
+    }
+
+    .batch-stats span {
+        background: #f8f9fa;
+        padding: 4px 8px;
+        border-radius: 4px;
+    }
+
+    .writeoff-section {
+        margin-top: 30px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+    }
+
+    .writeoff-title {
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #495057;
+        font-size: 18px;
+    }
+
+    .writeoff-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #6c757d;
+        margin-bottom: 4px;
+    }
+
+    .form-group input,
+    .form-group select {
+        padding: 10px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        font-size: 14px;
+        background: white;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        border-color: #2563eb;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    .writeoff-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 15px;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 25px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 900px;
+        max-height: 80vh;
+        overflow-y: auto;
+        animation: slideDown 0.3s;
+    }
+
+    @keyframes slideDown {
+        from {
+            transform: translateY(-50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .modal-header h2 {
+        margin: 0;
+        color: #333;
+        font-size: 20px;
+    }
+
+    .close {
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        color: #6c757d;
+        transition: color 0.2s;
+    }
+
+    .close:hover {
+        color: #333;
+    }
+
+    .items-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .items-table th {
+        background: #f8f9fa;
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+        color: #495057;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .items-table td {
+        padding: 12px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .items-table tbody tr:hover {
+        background-color: #f0f7ff;
+    }
+
+    .loading, .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #6c757d;
+        font-style: italic;
+    }
+
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        border-radius: 8px;
+        z-index: 9999;
+        animation: slideIn 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .notification-success {
+        background: #d4edda;
+        color: #155724;
+        border-left: 4px solid #28a745;
+    }
+
+    .notification-error {
+        background: #f8d7da;
+        color: #721c24;
+        border-left: 4px solid #dc3545;
+    }
+
+    .notification-info {
+        background: #d1ecf1;
+        color: #0c5460;
+        border-left: 4px solid #17a2b8;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    .user-info {
+        background: #e7f3ff;
+        border: 1px solid #2563eb;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .user-info .role {
+        background: #2563eb;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        margin-left: 10px;
+    }
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-toggle {
+    cursor: pointer;
+    padding: 10px 0;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    min-width: 160px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    border-radius: 6px;
+    z-index: 1000;
+    margin-top: 5px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+/* Показываем меню при наведении на dropdown ИЛИ на само меню */
+.dropdown:hover .dropdown-menu,
+.dropdown-menu:hover {
+    display: block;
+    opacity: 1;
+}
+
+/* Добавляем невидимый мостик между триггером и меню */
+.dropdown::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background: transparent;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 10px 15px;
+    color: #4a5568;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.dropdown-menu a:hover {
+    background: #f0f7ff;
+    color: #2563eb;
+}
+
+/* Для мобильных устройств можно добавить поддержку тапа */
+@media (max-width: 768px) {
+    .dropdown.active .dropdown-menu {
+        display: block;
+        opacity: 1;
+    }
+}
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="/main" class="logo">Shop</a>
+    <div class="nav-links">
+      <a href="/main">Главная</a>
+      <a href="/admin/pannel">Панель управления</a>
+      <a href="/batches" class="active">Поставки</a>
+      <a href="/inventory">Остатки</a>
+      <div class="dropdown">
+        <a href="#" class="dropdown-toggle">Контакты ▼</a>
+        <div class="dropdown-menu">
+          <a href="/warehouses">Склады</a>
+          <a href="/suppliers">Поставщики</a>
+        </div>
+      </div>
+      <a href="/profile">Профиль</a>
+      <a href="/logout" id="logoutBtn">Выйти</a>
+    </div>
+  </div>
+</nav>
+
+<main class="container">
+  <div class="user-info" id="userInfo" style="display: none;">
+    <div>
+      <strong id="currentUserName"></strong>
+      <span class="role" id="currentUserRole"></span>
+    </div>
+    <div>
+      <span>Склад: <strong id="currentUserWarehouse"></strong></span>
+    </div>
+  </div>
+
+  <div class="header-actions">
+    <h1>Поставки на склад</h1>
+    <a href="/batches/create" class="btn-primary">+ Новая поставка</a>
+  </div>
+
+  <div class="warehouse-selector" id="warehouseSelector"></div>
+
+  <div class="filters-section">
+    <div class="filters-title">🔍 Фильтры</div>
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label>Поставщик</label>
+        <select id="filterSupplier">
+          <option value="">Все поставщики</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Товар</label>
+        <select id="filterProduct">
+          <option value="">Все товары</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Период поставки</label>
+        <div class="date-range">
+          <input type="date" id="filterDateFrom" placeholder="От">
+          <input type="date" id="filterDateTo" placeholder="До">
+        </div>
+      </div>
+    </div>
+    <div class="filter-actions">
+      <button class="btn-apply" id="applyFiltersBtn">Применить фильтры</button>
+      <button class="btn-clear" id="clearFiltersBtn">Сбросить</button>
+    </div>
+    <div class="active-filters" id="activeFilters" style="display: none;"></div>
+  </div>
+
+  <div id="batchesList" class="batches-list">
+    <div class="loading">Загрузка данных...</div>
+  </div>
+
+
+</main>
+
+<div id="batchModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modalBatchNumber">Поставка №</h2>
+      <span class="close" id="closeModalBtn">&times;</span>
+    </div>
+    <div class="modal-body">
+      <table class="items-table">
+        <thead>
+        <tr>
+          <th>Товар</th>
+          <th>Количество</th>
+          <th>Срок годности</th>
+          <th>Дата производства</th>
+          <th>Себестоимость</th>
+        </tr>
+        </thead>
+        <tbody id="modalItemsBody">
+        <tr><td colspan="5" class="empty-state">Выберите поставку для просмотра</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  const BASE_URL = 'http://localhost:8081';
+
+  let currentUser = null;
+  let currentWarehouseId = '';
+  let currentFilters = {
+      supplierId: null,
+      productId: null,
+      dateFrom: null,
+      dateTo: null
+  };
+  let userCanSelectWarehouse = false;
+  let userShopId = null;
+  let suppliers = [];
+  let products = [];
+  let warehouses = [];
+
+  function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `notification notification-${type}`;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      setTimeout(() => notification.remove(), 3000);
+  }
+
+  async function loadCurrentUser() {
+      try {
+          const response = await fetch(`${BASE_URL}/api/user/current`, {
+              credentials: 'include',
+              headers: {
+                  'Content-Type': 'application/json'
+              }
+          });
+
+          if (response.ok) {
+              currentUser = await response.json();
+              console.log('Current user loaded:', currentUser);
+
+              // Проверяем наличие shopId
+              if (!currentUser.shopId && currentUser.shopid) {
+                  currentUser.shopId = currentUser.shopid;
+              }
+
+              if (!currentUser.shopId) {
+                  console.error('У пользователя нет shopId!');
+                  showNotification('Ошибка: у вашей учетной записи не привязан склад', 'error');
+              }
+
+              await loadAllWarehouses();
+              displayUserInfo();
+              await loadUserWarehouse();
+              await loadSuppliers();
+              await loadProducts();
+
+              return true;
+          } else if (response.status === 401) {
+              window.location.href = '/login';
+              return false;
+          } else {
+              console.error('Ошибка загрузки пользователя:', response.status);
+              showNotification('Ошибка загрузки пользователя', 'error');
+              return false;
+          }
+      } catch (error) {
+          console.error('Ошибка загрузки пользователя:', error);
+          showNotification('Ошибка загрузки данных пользователя', 'error');
+          return false;
+      }
+  }
+
+  function displayUserInfo() {
+      const userInfo = document.getElementById('userInfo');
+      if (!userInfo) return;
+
+      document.getElementById('currentUserName').textContent = currentUser.fullName || currentUser.username;
+
+      const roleMap = {
+          'ADMIN': 'Администратор',
+          'MANAGER': 'Менеджер',
+          'STOREKEEPER': 'Кладовщик',
+          'SENIOR_STOREKEEPER': 'Старший кладовщик'
+      };
+      document.getElementById('currentUserRole').textContent = roleMap[currentUser.role] || currentUser.role;
+
+      const warehouse = warehouses.find(w => w.id === currentUser.shopId);
+      const warehouseName = warehouse ? warehouse.name : (currentUser.shopId ? `Склад №${currentUser.shopId}` : 'Не привязан');
+      document.getElementById('currentUserWarehouse').textContent = warehouseName;
+
+      userInfo.style.display = 'flex';
+  }
+
+  async function loadAllWarehouses() {
+      try {
+          const response = await fetch(`${BASE_URL}/api/warehouses/getAllWarehouses`, {
+              credentials: 'include',
+              headers: {
+                  'Content-Type': 'application/json'
+              }
+          });
+
+          if (response.ok) {
+              warehouses = await response.json();
+              console.log('Warehouses loaded:', warehouses);
+          } else {
+              console.error('Ошибка загрузки складов, статус:', response.status);
+              warehouses = [
+                  { id: 1, name: 'Склад №1' },
+                  { id: 2, name: 'Склад №2' },
+                  { id: 3, name: 'Склад №3' }
+              ];
+          }
+      } catch (error) {
+          console.error('Ошибка загрузки складов:', error);
+          warehouses = [
+              { id: 1, name: 'Склад №1' },
+              { id: 2, name: 'Склад №2' },
+              { id: 3, name: 'Склад №3' }
+          ];
+      }
+  }
+
+  async function loadUserWarehouse() {
+      if (!currentUser) return;
+
+      userCanSelectWarehouse = currentUser.role === 'ADMIN';
+      userShopId = currentUser.shopId;
+
+      console.log('User role:', currentUser.role);
+      console.log('User shopId:', userShopId);
+      console.log('Can select warehouse:', userCanSelectWarehouse);
+
+      setupWarehouseSelector();
+
+      if (userShopId) {
+          currentWarehouseId = userShopId;
+          if (!userCanSelectWarehouse) {
+              await loadBatches();
+              await loadProductsForWriteoff();
+          }
+      } else {
+          console.error('userShopId is null or undefined');
+          showNotification('У вашей учетной записи не привязан склад', 'error');
+      }
+  }
+
+  function setupWarehouseSelector() {
+      const selector = document.getElementById('warehouseSelector');
+      if (!selector) return;
+
+      if (!userCanSelectWarehouse && userShopId) {
+          const warehouse = warehouses.find(w => w.id === userShopId);
+          const warehouseName = warehouse ? warehouse.name : `Склад №${userShopId}`;
+          selector.innerHTML = `
+              <label><strong>Ваш склад:</strong></label>
+              <span class="warehouse-info">🏢 ${warehouseName} (ID: ${userShopId})</span>
+          `;
+      } else if (userCanSelectWarehouse) {
+          let options = '<option value="">-- Выберите склад --</option>';
+          warehouses.forEach(w => {
+              options += `<option value="${w.id}" ${w.id === userShopId ? 'selected' : ''}>${w.name}</option>`;
+          });
+          selector.innerHTML = `
+              <label for="warehouseId"><strong>Выберите склад:</strong></label>
+              <select id="warehouseId">${options}</select>
+          `;
+
+          const warehouseSelect = document.getElementById('warehouseId');
+          if (warehouseSelect) {
+              warehouseSelect.addEventListener('change', function() {
+                  if (this.value) {
+                      currentWarehouseId = parseInt(this.value);
+                      loadBatches();
+                      loadProductsForWriteoff();
+                  } else {
+                      document.getElementById('batchesList').innerHTML = '<div class="loading">Выберите склад для загрузки поставок...</div>';
+                  }
+              });
+
+              // Если есть выбранный склад, сразу загружаем
+              if (warehouseSelect.value) {
+                  currentWarehouseId = parseInt(warehouseSelect.value);
+                  loadBatches();
+                  loadProductsForWriteoff();
+              }
+          }
+      } else {
+          selector.innerHTML = '<div class="empty-state">У вас нет доступа к складам</div>';
+      }
+  }
+
+  function getWarehouseName(warehouseId) {
+      const warehouse = warehouses.find(w => w.id === warehouseId);
+      return warehouse ? warehouse.name : `Склад №${warehouseId}`;
+  }
+
+  async function loadSuppliers() {
+      try {
+          const response = await fetch(`${BASE_URL}/api/suppliers/getAllSuppliers`, {
+              credentials: 'include',
+              headers: {
+                  'Content-Type': 'application/json'
+              }
+          });
+          if (response.ok) {
+              suppliers = await response.json();
+              const select = document.getElementById('filterSupplier');
+              suppliers.forEach(supplier => {
+                  const option = document.createElement('option');
+                  option.value = supplier.id;
+                  option.textContent = supplier.name;
+                  select.appendChild(option);
+              });
+          }
+      } catch (error) {
+          console.error('Ошибка загрузки поставщиков:', error);
+      }
+  }
+
+  async function loadProducts() {
+      try {
+          const response = await fetch(`${BASE_URL}/api/products/getAllProducts`, {
+              credentials: 'include',
+              headers: {
+                  'Content-Type': 'application/json'
+              }
+          });
+          if (response.ok) {
+              products = await response.json();
+              const select = document.getElementById('filterProduct');
+              products.forEach(product => {
+                  const option = document.createElement('option');
+                  option.value = product.id;
+                  option.textContent = product.name;
+                  select.appendChild(option);
+              });
+          }
+      } catch (error) {
+          console.error('Ошибка загрузки товаров:', error);
+      }
+  }
+
+  async function loadProductsForWriteoff() {
+      try {
+          const select = document.getElementById('writeoffProduct');
+          if (!select) return;
+
+          select.innerHTML = '<option value="">Выберите товар</option>';
+
+          if (!currentWarehouseId) {
+              console.log('No currentWarehouseId for writeoff');
+              return;
+          }
+
+          console.log('Loading products for writeoff, warehouse:', currentWarehouseId);
+
+          const response = await fetch(`${BASE_URL}/api/inventory/warehouse/${currentWarehouseId}`, {
+              credentials: 'include',
+              headers: {
+                  'Content-Type': 'application/json'
+              }
+          });
+
+          if (response.ok) {
+              const inventory = await response.json();
+              inventory.forEach(item => {
+                  const option = document.createElement('option');
+                  option.value = item.productId;
+                  option.textContent = `${item.productName} (доступно: ${item.quantity})`;
+                  option.dataset.available = item.quantity;
+                  select.appendChild(option);
+              });
+          } else if (response.status === 403) {
+              console.error('Доступ запрещен к inventory');
+              showNotification('Нет прав для просмотра остатков', 'error');
+          }
+      } catch (error) {
+          console.error('Ошибка загрузки товаров для списания:', error);
+      }
+  }
+
+  async function loadBatches() {
+      if (!currentWarehouseId) {
+          document.getElementById('batchesList').innerHTML = '<div class="empty-state">Выберите склад для загрузки поставок</div>';
+          return;
+      }
+
+      const batchesList = document.getElementById('batchesList');
+      batchesList.innerHTML = '<div class="loading">Загрузка поставок...</div>';
+
+      try {
+          console.log('Loading batches for warehouse:', currentWarehouseId);
+
+          const url = `${BASE_URL}/api/batches/warehouse/${currentWarehouseId}/grouped`;
+
+          const response = await fetch(url, {
+              method: 'GET',
+              credentials: 'include',
+              headers: {
+                  'Content-Type': 'application/json'
+              }
+          });
+
+          if (!response.ok) {
+              if (response.status === 403) {
+                  throw new Error('Доступ запрещен (403)');
+              }
+              throw new Error(`Ошибка HTTP: ${response.status}`);
+          }
+
+          const batches = await response.json();
+          console.log('Batches loaded:', batches);
+          displayBatches(batches);
+          updateActiveFiltersDisplay();
+
+      } catch (error) {
+          console.error('Ошибка загрузки поставок:', error);
+          document.getElementById('batchesList').innerHTML = `<div class="empty-state">Ошибка загрузки данных: ${error.message}</div>`;
+          showNotification('Ошибка загрузки поставок', 'error');
+      }
+  }
+
+  function displayBatches(batches) {
+      const batchesList = document.getElementById('batchesList');
+
+      if (!batches || batches.length === 0) {
+          batchesList.innerHTML = '<div class="empty-state">Нет поставок для выбранного склада</div>';
+          return;
+      }
+
+      batchesList.innerHTML = '';
+
+      batches.forEach(batch => {
+          const batchCard = document.createElement('div');
+          batchCard.className = 'batch-card';
+          batchCard.onclick = () => showBatchDetails(batch);
+
+          const createdDate = batch.createdAt ? new Date(batch.createdAt).toLocaleDateString() : 'Нет даты';
+          const itemCount = batch.items?.length || 0;
+          const totalQty = batch.items?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0;
+
+          batchCard.innerHTML = `
+              <div class="batch-header">
+                  <span class="batch-number">Поставка №${batch.batchNumber || batch.id}</span>
+                  <div class="batch-stats">
+                      <span>📦 Товаров: ${itemCount}</span>
+                      <span>🔢 Всего единиц: ${totalQty}</span>
+                      <span>📅 ${createdDate}</span>
+                  </div>
+              </div>
+          `;
+
+          batchesList.appendChild(batchCard);
+      });
+  }
+
+  function showBatchDetails(batch) {
+      document.getElementById('modalBatchNumber').textContent = `Поставка №${batch.batchNumber || batch.id} (от ${batch.createdAt ? new Date(batch.createdAt).toLocaleDateString() : 'н/д'})`;
+
+      const tbody = document.getElementById('modalItemsBody');
+      tbody.innerHTML = '';
+
+      if (batch.items && batch.items.length > 0) {
+          batch.items.forEach(item => {
+              const row = document.createElement('tr');
+              const expiryDate = item.expiryDate ? new Date(item.expiryDate).toLocaleDateString() : 'н/д';
+              const productionDate = item.productionDate ? new Date(item.productionDate).toLocaleDateString() : 'н/д';
+
+              row.innerHTML = `
+                  <td>${item.productName || 'Товар ' + item.productId}</td>
+                  <td>${item.quantity || 0} шт</td>
+                  <td>${expiryDate}</td>
+                  <td>${productionDate}</td>
+                  <td>${item.costPrice || 0} ₽</td>
+              `;
+              tbody.appendChild(row);
+          });
+      } else {
+          tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Нет товаров в поставке</td></tr>';
+      }
+
+      document.getElementById('batchModal').style.display = 'block';
+  }
+
+  function applyFilters() {
+      const supplierId = document.getElementById('filterSupplier').value;
+      const productId = document.getElementById('filterProduct').value;
+      const dateFrom = document.getElementById('filterDateFrom').value;
+      const dateTo = document.getElementById('filterDateTo').value;
+
+      currentFilters = {
+          supplierId: supplierId ? parseInt(supplierId) : null,
+          productId: productId ? parseInt(productId) : null,
+          dateFrom: dateFrom || null,
+          dateTo: dateTo || null
+      };
+
+      if (currentWarehouseId) {
+          loadBatches();
+      }
+  }
+
+  function clearFilters() {
+      document.getElementById('filterSupplier').value = '';
+      document.getElementById('filterProduct').value = '';
+      document.getElementById('filterDateFrom').value = '';
+      document.getElementById('filterDateTo').value = '';
+
+      currentFilters = {
+          supplierId: null,
+          productId: null,
+          dateFrom: null,
+          dateTo: null
+      };
+
+      updateActiveFiltersDisplay();
+
+      if (currentWarehouseId) {
+          loadBatches();
+      }
+  }
+
+  function updateActiveFiltersDisplay() {
+      const activeFiltersDiv = document.getElementById('activeFilters');
+      activeFiltersDiv.innerHTML = '';
+
+      let hasFilters = false;
+
+      if (currentFilters.supplierId) {
+          hasFilters = true;
+          const supplier = suppliers.find(s => s.id === currentFilters.supplierId);
+          const supplierName = supplier ? supplier.name : 'Поставщик ' + currentFilters.supplierId;
+          addFilterTag('supplier', 'Поставщик: ' + supplierName);
+      }
+
+      if (currentFilters.productId) {
+          hasFilters = true;
+          const product = products.find(p => p.id === currentFilters.productId);
+          const productName = product ? product.name : 'Товар ' + currentFilters.productId;
+          addFilterTag('product', 'Товар: ' + productName);
+      }
+
+      if (currentFilters.dateFrom || currentFilters.dateTo) {
+          hasFilters = true;
+          let dateText = 'Дата: ';
+          if (currentFilters.dateFrom && currentFilters.dateTo) {
+              dateText += `с ${currentFilters.dateFrom} по ${currentFilters.dateTo}`;
+          } else if (currentFilters.dateFrom) {
+              dateText += `с ${currentFilters.dateFrom}`;
+          } else if (currentFilters.dateTo) {
+              dateText += `по ${currentFilters.dateTo}`;
+          }
+          addFilterTag('date', dateText);
+      }
+
+      activeFiltersDiv.style.display = hasFilters ? 'flex' : 'none';
+  }
+
+  function addFilterTag(type, text) {
+      const activeFiltersDiv = document.getElementById('activeFilters');
+      const tag = document.createElement('span');
+      tag.className = 'filter-tag';
+      tag.innerHTML = `${text} <button onclick="removeFilter('${type}')">×</button>`;
+      activeFiltersDiv.appendChild(tag);
+  }
+
+  function removeFilter(filterType) {
+      switch(filterType) {
+          case 'supplier':
+              document.getElementById('filterSupplier').value = '';
+              currentFilters.supplierId = null;
+              break;
+          case 'product':
+              document.getElementById('filterProduct').value = '';
+              currentFilters.productId = null;
+              break;
+          case 'date':
+              document.getElementById('filterDateFrom').value = '';
+              document.getElementById('filterDateTo').value = '';
+              currentFilters.dateFrom = null;
+              currentFilters.dateTo = null;
+              break;
+      }
+
+      updateActiveFiltersDisplay();
+
+      if (currentWarehouseId) {
+          loadBatches();
+      }
+  }
+
+  async function submitWriteoff() {
+      const productId = document.getElementById('writeoffProduct').value;
+      const quantity = document.getElementById('writeoffQuantity').value;
+      const reason = document.getElementById('writeoffReason').value;
+
+      if (!productId) { showNotification('Выберите товар', 'error'); return; }
+      if (!quantity || quantity <= 0) { showNotification('Введите корректное количество', 'error'); return; }
+      if (!reason) { showNotification('Выберите причину списания', 'error'); return; }
+
+      try {
+          const response = await fetch(`${BASE_URL}/api/inventory/writeoff`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                  warehouseId: currentWarehouseId,
+                  productId: parseInt(productId),
+                  quantity: parseInt(quantity),
+                  reason: reason
+              }),
+              credentials: 'include'
+          });
+
+          if (response.ok) {
+              showNotification('Товар успешно списан', 'success');
+              clearWriteoffForm();
+              await loadProductsForWriteoff();
+          } else {
+              const error = await response.text();
+              showNotification(`Ошибка списания: ${error}`, 'error');
+          }
+      } catch (error) {
+          console.error('Ошибка списания:', error);
+          showNotification('Ошибка списания', 'error');
+      }
+  }
+
+  function clearWriteoffForm() {
+      document.getElementById('writeoffProduct').value = '';
+      document.getElementById('writeoffQuantity').value = '';
+      document.getElementById('writeoffReason').value = 'Истек срок годности';
+  }
+
+  document.addEventListener('DOMContentLoaded', async function() {
+      console.log('Page loaded, initializing...');
+
+      // Загружаем пользователя и все данные
+      const userLoaded = await loadCurrentUser();
+
+      if (!userLoaded) {
+          console.error('Failed to load user');
+          return;
+      }
+
+      // Назначаем обработчики событий
+      document.getElementById('applyFiltersBtn').addEventListener('click', applyFilters);
+      document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
+
+      document.getElementById('closeModalBtn').addEventListener('click', function() {
+          document.getElementById('batchModal').style.display = 'none';
+      });
+
+      document.getElementById('submitWriteoffBtn').addEventListener('click', submitWriteoff);
+      document.getElementById('clearWriteoffBtn').addEventListener('click', clearWriteoffForm);
+
+      window.addEventListener('click', function(event) {
+          const modal = document.getElementById('batchModal');
+          if (event.target == modal) {
+              modal.style.display = 'none';
+          }
+      });
+
+      window.removeFilter = removeFilter;
+  });
+</script>
+</body>
+</html>

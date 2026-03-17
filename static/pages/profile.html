@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой профиль</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #4a5568;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+
+        .nav-links a.active {
+            color: #2563eb;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .profile-avatar {
+            font-size: 64px;
+            margin-bottom: 15px;
+        }
+
+        .profile-header h2 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .profile-role {
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .profile-info {
+            padding: 30px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-item .label {
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .info-item .value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .status-active {
+            color: #28a745;
+        }
+
+        .status-inactive {
+            color: #dc3545;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-toggle {
+    cursor: pointer;
+    padding: 10px 0;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    min-width: 160px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    border-radius: 6px;
+    z-index: 1000;
+    margin-top: 5px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+/* Показываем меню при наведении на dropdown ИЛИ на само меню */
+.dropdown:hover .dropdown-menu,
+.dropdown-menu:hover {
+    display: block;
+    opacity: 1;
+}
+
+/* Добавляем невидимый мостик между триггером и меню */
+.dropdown::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background: transparent;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 10px 15px;
+    color: #4a5568;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.dropdown-menu a:hover {
+    background: #f0f7ff;
+    color: #2563eb;
+}
+
+/* Для мобильных устройств можно добавить поддержку тапа */
+@media (max-width: 768px) {
+    .dropdown.active .dropdown-menu {
+        display: block;
+        opacity: 1;
+    }
+}
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="/" class="logo">Shop</a>
+        <div class="nav-links">
+            <a href="/main">Главная</a>
+            <a href="/admin/pannel">Панель управления</a>
+            <a href="/batches">Поставки</a>
+            <a href="/inventory">Остатки</a>
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle">Контакты ▼</a>
+                <div class="dropdown-menu">
+                    <a href="/warehouses">Склады</a>
+                    <a href="/suppliers">Поставщики</a>
+                </div>
+            </div>
+            <a href="/profile" class="active">Профиль</a>
+            <a href="/login" id="logoutBtn">Выйти</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+    <div class="profile-card">
+        <div class="profile-header">
+            <div class="profile-avatar">👤</div>
+            <h2 id="userFullName">Загрузка...</h2>
+            <span class="profile-role" id="userRole">Загрузка...</span>
+        </div>
+
+        <div class="profile-info">
+            <div class="info-item">
+                <span class="label">Логин</span>
+                <span class="value" id="userUsername">Загрузка...</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Email</span>
+                <span class="value" id="userEmail">Загрузка...</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Телефон</span>
+                <span class="value" id="userPhone">Загрузка...</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Склад</span>
+                <span class="value" id="userWarehouse">Загрузка...</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Статус</span>
+                <span class="value" id="userStatus">Загрузка...</span>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    const BASE_URL = 'http://localhost:8081';
+    let warehouses = [];
+
+    async function loadUserProfile() {
+        try {
+            const response = await fetch(`${BASE_URL}/api/user/current`, {
+                credentials: 'include'
+            });
+            if (response.ok) {
+                const user = await response.json();
+                await loadWarehouses();
+                displayProfile(user);
+            } else if (response.status === 401) {
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки профиля:', error);
+        }
+    }
+
+    async function loadWarehouses() {
+        try {
+            const response = await fetch(`${BASE_URL}/api/warehouses/getAllWarehouses`, {
+                credentials: 'include'
+            });
+            if (response.ok) {
+                warehouses = await response.json();
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки складов:', error);
+        }
+    }
+
+    function displayProfile(user) {
+        document.getElementById('userFullName').textContent = user.fullName || user.username;
+        document.getElementById('userUsername').textContent = user.username;
+
+        const roleMap = {
+            'ADMIN': 'Администратор',
+            'MANAGER': 'Менеджер',
+            'STOREKEEPER': 'Кладовщик',
+            'SENIOR_STOREKEEPER': 'Старший кладовщик'
+        };
+        document.getElementById('userRole').textContent = roleMap[user.role] || user.role;
+
+        document.getElementById('userEmail').textContent = user.email || 'не указан';
+        document.getElementById('userPhone').textContent = user.phone || 'не указан';
+
+        const warehouse = warehouses.find(w => w.id === user.shopId);
+        document.getElementById('userWarehouse').textContent = warehouse ? warehouse.name : (user.shopId ? `Склад №${user.shopId}` : 'Не привязан');
+
+        const statusEl = document.getElementById('userStatus');
+        if (user.isActive == 1) {
+            statusEl.textContent = 'Активен';
+            statusEl.className = 'value status-active';
+        } else {
+            statusEl.textContent = 'Неактивен';
+            statusEl.className = 'value status-inactive';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadUserProfile);
+</script>
+</body>
+</html>

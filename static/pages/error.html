@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ошибка</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .error-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 500px;
+            padding: 50px 40px;
+            text-align: center;
+        }
+
+        .error-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .error-code {
+            font-size: 48px;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #6c757d;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .btn-home {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            padding: 14px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .btn-home:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-login {
+            display: inline-block;
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            padding: 14px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background 0.2s;
+            margin-left: 10px;
+        }
+
+        .btn-login:hover {
+            background: #5a6268;
+        }
+    </style>
+</head>
+<body>
+<div class="error-container">
+    <div class="error-icon">⚠️</div>
+    <h1>Что-то пошло не так</h1>
+    <div class="error-code" id="errorCode">404</div>
+    <p id="errorMessage">Страница не найдена</p>
+    <div>
+        <a href="/main" class="btn-home">На главную</a>
+        <a href="/login" class="btn-login">Войти</a>
+    </div>
+</div>
+
+<script>
+    // Получаем параметры из URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const errorCode = urlParams.get('code') || '404';
+    const errorMessage = urlParams.get('message') || 'Страница не найдена';
+
+    document.getElementById('errorCode').textContent = errorCode;
+    document.getElementById('errorMessage').textContent = errorMessage;
+</script>
+</body>
+</html>
